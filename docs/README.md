@@ -6,8 +6,8 @@ Name and link the main reference documents where relevant. Develop worked
 examples in the relevant subsections, explain the modeling choices, and connect
 the Lean definitions to the behavior being studied. Include
 enough reasoning for a reader to follow the result. Prefer revising an unclear
-note to adding another topic. [One paid call](../VDSI/Cases/PaidCall/Note.mdx)
-is the first example.
+note to adding another topic. Earlier worked examples are preserved in the
+[archive](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 
 ## Preview locally
 
@@ -23,8 +23,9 @@ the changed pages, including at phone width. `npm run preview` serves the built 
 
 ## Keep the note beside its code
 
-Write `Note.mdx` beside the relevant module, for example
-`VDSI/Cases/PaidCall/Note.mdx`. Its metadata supplies the navigation:
+Write `Note.mdx` beside the relevant module under `VDSI/`. Create the module
+and its note when there is a concrete definition to explain. The note's
+metadata supplies the navigation:
 
 ```yaml
 ---
@@ -36,12 +37,9 @@ order: 2
 ```
 
 Use a unique slug and choose an order for the reading sequence. Add `draft: true`
-while a note is unfinished; drafts stay out of the site. Keep standalone research
-topics in `topics/`. When a topic is developed beside a module, consolidate its
-useful sources and modeling questions there and remove the superseded draft.
-Preserve slugs, section labels, and ordering when moving source directories.
-The Preliminaries reading group spans `Foundation/`, `Reference/`, and
-`Native/Wallet/`; it does not prescribe a code dependency or directory.
+while a note is unfinished; drafts stay out of the site. Preserve slugs,
+section labels, and ordering when moving source directories. Reading groups
+do not prescribe code dependencies or directories.
 
 The page supplies its own title, so start the body with prose. Use ordinary
 Markdown for the explanation and `$...$` for inline math. There is no required
@@ -79,7 +77,8 @@ Follow the [diagram style](DIAGRAMS.md): editable SVG, CloK typography,
 and consistent colors for task interaction, spending authority, and settlement.
 Use isometric nodes for module relationships, proportional bands for resource
 allocation, ledger views for balance changes, and state graphs for alternative
-outcomes. Reuse the matching generation script.
+outcomes. The retained `tools/draw-native-system.py` supplies the approved
+geometry. Its diagram is a style reference, not the current implementation.
 
 ## Shared documentation format
 

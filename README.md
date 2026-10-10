@@ -2,68 +2,50 @@
 
 *Verified Decentralized Superintelligence with Digital Tokenomics*
 
-[![Documentation](https://img.shields.io/badge/Documentation-clok.tech-7fb8d1)](https://www.clok.tech/docs/give-and-take)
+ν-DSI studies human-agent coordination and resource allocation through digital
+tokenomics, using formal models, specifications, executable code, and proofs in
+Lean.
 
-ν-DSI develops formal models, specifications, executable code, and proofs in Lean toward a verified decentralized superintelligence (DSI) system. Its design combines human-agent collaboration with digital tokenomics to allocate physical and computational resources for building, verifying, and improving hardware, compute, software, and scientific infrastructure.
+## This branch
 
-We study digital tokenomics as a means of pricing and funding resources,
-settling payments, and defining rewards for contributions. This includes the
-design of digital assets and monetary rules, alongside the incentives those
-rules create for participants. The project's own chain, stablecoin mechanisms, wallets, and agent protocols are components of this economic infrastructure.
+`feature/participant-model` starts the model again from its basic definitions.
+It currently contains the Lean build setup and documentation tools. No
+participants, accounts, wallets, ledger rules, or payment operations have been
+defined in this version.
 
-Executable Lean models of external infrastructure provide comparison cases.
-The research target is to relate selected reference compositions and the native
-implementation to common specifications, with explicit observation mappings
-and assumptions. Those correspondence proofs are not yet implemented.
+The previous code, proofs, notes, and reference tools are preserved at
+[commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483),
+also named `archive/pre-participant-model-20261010`. They can be consulted
+without importing their definitions into this branch.
 
-[Modules and interactions](VDSI/Cases/PaidTask/System/Note.mdx) introduces the environment
-of an on-chain agent economy. The source studies cover Bitcoin, Ethereum
-execution-specs, Solana and Agave, OpenZeppelin ERC-20, PASS wallets, x402, AP2,
-Circle Gateway, Nevermined, and A2A.
-The blockchain examples model Ethereum balance-and-nonce transfers and Solana
-account-access conflicts, including contention on a shared fee payer.
-The [paid-call example](VDSI/Cases/PaidCall/Note.mdx#recover-a-lost-reply)
-models a lost reply and retry, proving at-most-once payment and fund conservation
-under atomic local accounting and receipt storage.
+## Files
 
-The current implementation consists of local executable models and proofs.
-Block production, a persistent node, and stablecoin issuance and redemption are
-not yet implemented. Run the existing examples with:
+| File | Purpose |
+| --- | --- |
+| `VDSI.lean` | Library entry point; no domain definitions yet |
+| `Main.lean` | Startup check for the Lean executable |
+| `scripts/Audit.lean` | Axiom audit entry point; no public theorems yet |
+| `lakefile.toml`, `lean-toolchain` | Build configuration and pinned Lean version |
+| `docs/`, `tools/` | Documentation, renderer, and authoring tools |
+
+Add source files only as a concrete definition, operation, or property needs
+them. See [Contributing](CONTRIBUTING.md) and the
+[current architecture status](docs/ARCHITECTURE.md).
+
+## Run
 
 ```sh
 lake build
 lake exe demo
+lake env lean scripts/Audit.lean
 ```
 
-The source is organized by responsibility:
+The demo currently prints a startup message. A successful build checks the
+project setup; there are no model properties to verify yet.
 
-```text
-VDSI/
-  Foundation/    Shared identities, asset amounts, and quantities
-  Reference/     Ethereum, Solana, ERC-20, x402, and A2A models
-  Native/Wallet/ The project's spending policy
-  Cases/         PaidCall (including Retry) and PaidTask (including System)
-```
-
-Start with [PaidCall/Model.lean](VDSI/Cases/PaidCall/Model.lean),
-[Spec.lean](VDSI/Cases/PaidCall/Spec.lean), and
-[Execution.lean](VDSI/Cases/PaidCall/Execution.lean) to follow one
-reservation, settlement, or refund. Then read
-[Verification.lean](VDSI/Cases/PaidCall/Verification.lean) for the proofs.
-`Retry/` adds lost replies to that same case. Read the reference models as a case
-needs them; they are not prerequisites for running the demo.
-
-`Specs/` and `Comparisons/` will hold common specifications and correspondence
-proofs when the first concrete comparison is implemented. They do not exist yet.
-Notes remain beside their code; website navigation and URLs use note metadata
-and are independent of the source layout.
-
-The [architecture](docs/ARCHITECTURE.md) specifies the first chain and monetary
-subsystem, with an experimental reserve-and-redemption case. Its milestone is a
-local node that records transfers, mints and redeems against test reserves, and
-restores the same state after restart.
-
-Optional [external reference tools](tools/reference/README.md) collect comparison
-data. They are independent of the Lean runtime and are not project milestones.
+For documentation, run `npm ci` once, then `npm run build` or `npm run dev`.
+See the [notebook guide](docs/README.md). This branch's local overview describes
+the restart; the [published notebook](https://www.clok.tech/docs/give-and-take)
+continues to follow the main branch.
 
 Licensed under [Apache-2.0](LICENSE).

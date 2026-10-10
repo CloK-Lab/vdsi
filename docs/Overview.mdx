@@ -1,54 +1,9 @@
-These notes study how decentralized superintelligence (DSI) and digital
-tokenomics coordinate work and allocate physical and computational resources
-among people and agents. The economic mechanisms under study include resource
-pricing and funding, payment settlement, and rewards for contributions.
+These notes study human-agent coordination and resource allocation through
+digital tokenomics as part of a verified decentralized superintelligence
+(DSI) system. We develop its models, specifications, executable operations, and
+proofs natively in [Lean 4](https://lean-lang.org/).
 
-We develop formal models, specifications, executable code, and proofs natively in
-[Lean 4](https://lean-lang.org/). The current examples cover ledger transfers,
-spending authorization, and payment retries. External protocols provide
-reference designs for these studies.
-
-![Verified Infrastructure: Hardware, Compute, Software, and Science surround a human-agent workshop. Short fabrication benches with workpieces and tool arms connect the four areas to the central DSI Network. Its outer hexagon contains six human-agent pairs; its inner hexagon contains six connected wallets, each linked to its nearest pair. Energy sits at the center. Gold marks Tokenomics on Chain; blue marks building, verifying, and improving infrastructure. The scene represents the research goal of jointly building, verifying, and improving infrastructure.](./assets/economy-overview.svg)
-
-## Preliminaries
-
-The preliminaries review reference protocols and define the objects used by
-the executable examples.
-
-- [Modules and interactions](../VDSI/Cases/PaidTask/System/Note.mdx): an overview of the
-  environment and the relationships between its parts.
-- [Quantities and units](../VDSI/Foundation/Quantities/Note.mdx):
-  shared definitions for energy, time, asset amounts, nonces, and gas fees.
-- [Blockchain infrastructure](../VDSI/Reference/Ethereum/Note.mdx): Bitcoin, Ethereum,
-  and Solana: ledger state, transactions, account access, and fees.
-- [Assets and tokens](../VDSI/Reference/ERC20/Note.mdx): stablecoins for
-  pricing and payments, asset identity, and token balances and transfers.
-- [Wallets and authorization](../VDSI/Native/Wallet/Note.mdx): PASS's wallet
-  model and a concrete spending policy.
-- [Payment protocols and infrastructure](../VDSI/Reference/X402/Note.mdx):
-  x402 payment exchange, AP2 authorization, Circle Gateway settlement, and
-  Nevermined metering and billing.
-- [Agent communication](../VDSI/Reference/A2A/Note.mdx): Agent Cards, skills,
-  interfaces, and task states.
-
-## Examples
-
-- [A paid task](../VDSI/Cases/PaidTask/Note.mdx): authorize a payment of 0.003 ETH,
-  update balances in wei, and return an echo result.
-- [One paid call](../VDSI/Cases/PaidCall/Note.mdx): reservation, settlement,
-  refund, conservation of funds, and recovery from a lost reply without a second payment.
-
-## Run the example
-
-[Install the toolchain](https://lean-lang.org/install/), then run:
-
-```sh
-git clone https://github.com/CloK-Lab/vdsi.git
-cd vdsi
-lake build
-lake exe demo
-```
-
-The build checks the definitions, examples, and proofs. The demo runs a
-reservation with settlement or refund, a lost reply followed by a retry,
-and a payment followed by an echo task.
+This version contains the project setup. No participant model, ledger, payment
+operation, or system property has been defined or proved yet. The earlier
+models and notes are available in the
+[archived version](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).

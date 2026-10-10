@@ -9,9 +9,7 @@
     "dev": "astro dev",
     "build": "npm run check:docs && astro check && astro build",
     "preview": "astro preview",
-    "check:docs": "node tools/check-docs.mjs",
-    "check:reference-chain": "node tools/reference/check-base-sepolia.mjs",
-    "test:reference-chain": "node --test tools/reference/check-base-sepolia.test.mjs"
+    "check:docs": "node tools/check-docs.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

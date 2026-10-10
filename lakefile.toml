@@ -7,8 +7,8 @@ warningAsError = true
 
 [[lean_lib]]
 name = "VDSI"
-# Include every module's checks without importing fixtures into the library facade.
-globs = ["VDSI.*"]
+# Only the entry point exists; add a submodule glob when source modules exist.
+globs = ["VDSI"]
 
 [[lean_exe]]
 name = "demo"

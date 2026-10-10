@@ -17,7 +17,7 @@ jobs:
         with:
           auto-config: false
           build: true
-      - name: Run the paid-call demo
+      - name: Run the executable
         run: lake exe demo
       - name: Audit theorem assumptions
         run: lake env lean scripts/Audit.lean

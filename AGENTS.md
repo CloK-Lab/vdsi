@@ -12,11 +12,16 @@ tokenized assets, incentives, and safety are parts of that system.
   reference material only; do not build the runtime on external chains, issued
   stablecoins, hosted payment services, or their SDKs. Keep reference probes
   separate from project execution and record the actual implementation status.
-- Retain executable Lean models of external infrastructure as reference cases
-  alongside the native implementation. Compare selected compositions through
-  explicit common specifications and observation mappings. Distinguish shared
-  safety properties, refinement, and behavioral equivalence; model proofs do
-  not by themselves establish conformance of deployed external systems.
+- The previous code and notes are preserved at commit
+  `43f26201474a144b68924d2b485a0e3fd857c483` on
+  `archive/pre-participant-model-20261010`. This branch restarts the model from
+  basic definitions. Consult archived models as references; do not restore the
+  whole implementation or predefine its architecture without discussing the
+  next small modeling question with the user.
+- Compare reference and native models through explicit common specifications
+  and observation mappings. Distinguish shared safety properties, refinement,
+  and behavioral equivalence; model proofs do not by themselves establish
+  conformance of deployed external systems.
 - Prioritize learning: explain one small question clearly before adding topics.
   Use worked examples in the relevant subsections to explain modeling choices.
   Keep reader navigation small, leave undeveloped topics as drafts, and avoid
@@ -36,11 +41,10 @@ tokenized assets, incentives, and safety are parts of that system.
 - Read README.md, CONTRIBUTING.md, and the guide for the case being changed.
 - Keep definitions, specifications, execution, and verification separate.
   The demo and proofs must refer to the same executable Lean definitions.
-- Follow the source layout in README.md and docs/ARCHITECTURE.md. Foundation
-  has no dependencies on other project layers; Reference and Native do not
-  depend on each other or Cases. Keep cross-layer fixtures in Cases and future
-  correspondence proofs in Comparisons. Website navigation is independent of
-  source paths; preserve note slugs when moving modules.
+- Keep README.md and docs/ARCHITECTURE.md consistent with the code that exists.
+  Create source directories as concrete definitions need them. Keep restored
+  reference models separate from native execution. Website navigation is
+  independent of source paths; preserve note slugs when moving modules.
 - Add concrete cases before introducing general frameworks. Do not create empty
   modules for planned features or describe reading notes as implementations.
 - Preserve explicit units, assumptions, source versions, and proof boundaries.
