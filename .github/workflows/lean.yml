@@ -18,6 +18,6 @@ jobs:
           auto-config: false
           build: true
       - name: Run the executable
-        run: lake exe demo
+        run: lake exe vdsi
       - name: Audit theorem assumptions
         run: lake env lean scripts/Audit.lean

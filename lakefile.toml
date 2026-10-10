@@ -1,15 +1,15 @@
 name = "vdsi"
 version = "0.1.0"
-defaultTargets = ["VDSI", "demo"]
+defaultTargets = ["VDSI", "vdsi"]
 
 [leanOptions]
 warningAsError = true
 
 [[lean_lib]]
 name = "VDSI"
-# Only the entry point exists; add a submodule glob when source modules exist.
-globs = ["VDSI"]
+# Build the library entry point and all source modules.
+globs = ["VDSI", "VDSI.*"]
 
 [[lean_exe]]
-name = "demo"
+name = "vdsi"
 root = "Main"
