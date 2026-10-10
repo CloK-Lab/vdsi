@@ -9,8 +9,7 @@
 We study digital tokenomics as a means of pricing and funding resources,
 settling payments, and defining rewards for contributions. This includes the
 design of digital assets and monetary rules, alongside the incentives those
-rules create for participants. The project's own chain, stablecoin mechanisms,
-wallets, and agent protocols are components of this economic infrastructure.
+rules create for participants. The project's own chain, stablecoin mechanisms, wallets, and agent protocols are components of this economic infrastructure.
 
 Executable Lean models of external infrastructure provide comparison cases.
 The research target is to relate selected reference compositions and the native
