@@ -22,3 +22,6 @@ def main : IO Unit := do
   if (VDSI.register afterBob bob).isSome then
     throw (IO.userError "Duplicate Bob ID was accepted")
   IO.println "Register Bob again: rejected (ID already registered)"
+
+  IO.println s!"Find ID 1: {reprStr (VDSI.findParticipant afterBob { value := 1 })}"
+  IO.println s!"Find ID 3: {reprStr (VDSI.findParticipant afterBob { value := 3 })}"

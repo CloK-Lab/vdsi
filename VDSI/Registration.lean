@@ -9,4 +9,9 @@ def register (participants : List Participant) (participant : Participant) :
   else
     some (participants ++ [participant])
 
+/-- Return the first participant with the requested ID, or `none` if it is absent. -/
+def findParticipant (participants : List Participant) (id : ParticipantId) :
+    Option Participant :=
+  participants.find? (fun participant => decide (participant.id = id))
+
 end VDSI
