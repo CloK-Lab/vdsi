@@ -1,5 +1,9 @@
 import VDSI
 
+/-- info: 'VDSI.register_then_find_returns_participant' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.register_then_find_returns_participant
+
 /-- info: 'VDSI.register_satisfies_spec' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
 #print axioms VDSI.register_satisfies_spec
