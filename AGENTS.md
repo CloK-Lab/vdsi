@@ -52,7 +52,8 @@ tokenized assets, incentives, and safety are parts of that system.
   external asset backing, or chain settlement.
 - Do not introduce admitted proofs, custom axioms, or native evaluation axioms.
   Audit new public theorems in scripts/Audit.lean.
-- Run lake build, lake exe demo, and lake env lean scripts/Audit.lean.
+- Run `./scripts/check.sh` for the core build, tests, and axiom audit.
+  Run `lake exe proof-experiment` separately when changing that experiment.
 - Keep case notes beside their Lean source as Note.mdx and use source excerpts
   instead of copying definitions or proofs. Follow docs/README.md and clok.json.
 - For documentation changes, run npm run build and inspect the affected pages.

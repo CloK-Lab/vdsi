@@ -1,6 +1,6 @@
 name = "vdsi"
 version = "0.1.0"
-defaultTargets = ["VDSI", "vdsi"]
+defaultTargets = ["VDSI", "tests"]
 
 [leanOptions]
 warningAsError = true
@@ -10,6 +10,18 @@ name = "VDSI"
 # Build the library entry point and all source modules.
 globs = ["VDSI", "VDSI.*"]
 
+[[lean_lib]]
+name = "Tests"
+globs = ["Tests.*"]
+
 [[lean_exe]]
-name = "vdsi"
-root = "Main"
+name = "tests"
+root = "Tests.Main"
+
+[[lean_lib]]
+name = "Experiments"
+globs = ["Experiments.*"]
+
+[[lean_exe]]
+name = "proof-experiment"
+root = "Experiments.ProofTask"

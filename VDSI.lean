@@ -1,4 +1,13 @@
 import VDSI.Participant
+import VDSI.Registry
+import VDSI.Node
+import VDSI.Node.Message
+import VDSI.Node.Messaging
+import VDSI.Node.Spec
+import VDSI.Node.Verification
+import VDSI.Network
+import VDSI.Network.Spec
+import VDSI.Network.Verification
 import VDSI.Registration
 import VDSI.Registration.Spec
 import VDSI.Registration.Verification

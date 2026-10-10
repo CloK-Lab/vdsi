@@ -17,7 +17,7 @@ jobs:
         with:
           auto-config: false
           build: true
-      - name: Run the executable
-        run: lake exe vdsi
+      - name: Run core tests
+        run: lake exe tests
       - name: Audit theorem assumptions
         run: lake env lean scripts/Audit.lean

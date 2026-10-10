@@ -9,9 +9,9 @@ Lean.
 ## This branch
 
 `feature/participant-model` starts the model again from its basic definitions.
-It currently contains the Lean build setup and documentation tools. No
-participants, accounts, wallets, ledger rules, or payment operations have been
-defined in this version.
+It currently contains a Lean library for participant registration and local
+node messaging, with specifications, proofs, and tests. Proof-task experiments
+are separate from the core library. There is no standalone node service yet.
 
 The previous code, proofs, notes, and reference tools are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483),
@@ -22,9 +22,11 @@ without importing their definitions into this branch.
 
 | File | Purpose |
 | --- | --- |
-| `VDSI.lean` | Library entry point; no domain definitions yet |
-| `Main.lean` | Startup check for the Lean executable |
-| `scripts/Audit.lean` | Axiom audit entry point; no public theorems yet |
+| `VDSI.lean`, `VDSI/` | Core library: participants, registration, nodes, and messages |
+| `Tests/` | Core regression tests |
+| `Experiments/` | Optional experiments and their own checks |
+| `scripts/check.sh` | Build, run core tests, and audit theorem assumptions |
+| `scripts/Audit.lean` | Axiom dependency checks for public theorems |
 | `lakefile.toml`, `lean-toolchain` | Build configuration and pinned Lean version |
 | `docs/`, `tools/` | Documentation, renderer, and authoring tools |
 
@@ -34,14 +36,18 @@ them. See [Contributing](CONTRIBUTING.md) and the
 
 ## Run
 
-```sh
-lake build
-lake exe demo
-lake env lean scripts/Audit.lean
-```
+Run these commands from the repository root:
 
-The demo currently prints a startup message. A successful build checks the
-project setup; there are no model properties to verify yet.
+| Command | Purpose |
+| --- | --- |
+| `./scripts/check.sh` | Recommended after code changes: build the library and tests, run core tests, and audit theorem assumptions |
+| `lake exe tests` | Run only the core tests for registration, messaging, and the local network |
+| `lake exe proof-experiment` | Run the separate proof-task experiment, including its own regression checks |
+
+The system check does not build or run experiments. The proof experiment uses
+prewritten submissions and real Lean kernel checking; it does not call an AI
+prover. There is no `lake exe vdsi` startup command: tests and experiments import
+the core library directly.
 
 For documentation, run `npm ci` once, then `npm run build` or `npm run dev`.
 See the [notebook guide](docs/README.md). This branch's local overview describes

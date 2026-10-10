@@ -6,7 +6,9 @@ documentation and code comments.
 
 ## Rebuilding the model
 
-This branch begins with a buildable project and no domain definitions.
+This branch rebuilds the model from basic definitions. The core library currently
+covers participant registration and local node messaging; task experiments live
+separately in `Experiments/`.
 The previous implementation and notes are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 Consult them as references; introduce a previous definition only after its
@@ -18,7 +20,7 @@ an operation, state its inputs, units, rejection behavior, and assumptions.
 Keep definitions, specifications, execution, and verification separate, creating
 files as needed rather than preparing empty modules.
 
-The demo and proofs must use the same executable definitions. Keep IO at the
+Tests, experiments, and proofs must use the same executable definitions. Keep IO at the
 boundary, and do not make execution depend on verification. Extract shared
 abstractions when concrete cases need them.
 
@@ -50,16 +52,17 @@ with the code that actually exists.
 Run:
 
 ```sh
-lake build
-lake exe demo
-lake env lean scripts/Audit.lean
+./scripts/check.sh
 ```
 
+This builds the core library and tests, runs the tests, and audits theorem
+assumptions. Run `lake exe proof-experiment` separately when changing that
+experiment; its checks are included in the experiment command.
+
 Keep the Lean version pinned and add dependencies only when a concrete case
-needs them. The Lake configuration currently builds only the library entry
-point and executable. When source modules are added, include their checks in
-the build. Export definitions and proofs through `VDSI.lean`; import fixtures
-directly in the demo.
+needs them. Export core definitions and proofs through `VDSI.lean`. Core tests
+belong in `Tests/`; experiment definitions, submissions, and checks belong in
+`Experiments/`. The core library and tests must not import experiment modules.
 
 For documentation changes, run `npm run build` and inspect the affected pages
 locally, including navigation, excerpts, and phone-width layout.
