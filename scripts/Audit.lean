@@ -1,12 +1,24 @@
 import VDSI
 
-/-- info: 'VDSI.Network.deliverNext_satisfies_spec' depends on axioms: [propext, Quot.sound] -/
+/-- info: 'VDSI.System.execution_preserves_safety' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
-#print axioms VDSI.Network.deliverNext_satisfies_spec
+#print axioms VDSI.System.execution_preserves_safety
 
-/-- info: 'VDSI.Node.receiveRegistration_satisfies_spec' depends on axioms: [propext, Quot.sound] -/
+/-- info: 'VDSI.System.confirmed_registration_survives_execution' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
-#print axioms VDSI.Node.receiveRegistration_satisfies_spec
+#print axioms VDSI.System.confirmed_registration_survives_execution
+
+/-- info: 'VDSI.Node.restoreRegistry_satisfies_spec' does not depend on any axioms -/
+#guard_msgs in
+#print axioms VDSI.Node.restoreRegistry_satisfies_spec
+
+/-- info: 'VDSI.Node.mergeRegistry_satisfies_spec' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Node.mergeRegistry_satisfies_spec
+
+/-- info: 'VDSI.Node.merging_each_others_registry_agrees' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Node.merging_each_others_registry_agrees
 
 /-- info: 'VDSI.Node.same_requested_ids_produce_same_registered_ids' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in

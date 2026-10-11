@@ -1,6 +1,6 @@
 name = "vdsi"
 version = "0.1.0"
-defaultTargets = ["VDSI", "tests"]
+defaultTargets = ["VDSI", "tests", "node"]
 
 [leanOptions]
 warningAsError = true
@@ -17,6 +17,10 @@ globs = ["Tests.*"]
 [[lean_exe]]
 name = "tests"
 root = "Tests.Main"
+
+[[lean_exe]]
+name = "node"
+root = "NodeMain"
 
 [[lean_lib]]
 name = "Experiments"

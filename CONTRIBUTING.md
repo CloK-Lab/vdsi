@@ -7,8 +7,9 @@ documentation and code comments.
 ## Rebuilding the model
 
 This branch rebuilds the model from basic definitions. The core library currently
-covers participant registration and local node messaging; task experiments live
-separately in `Experiments/`.
+covers participant registration, node operations, and a system model of snapshot
+delivery and recovery. The TCP and storage runtime lives in `VDSI/Node/Runtime/`;
+task experiments live separately in `Experiments/`.
 The previous implementation and notes are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 Consult them as references; introduce a previous definition only after its
@@ -55,8 +56,9 @@ Run:
 ./scripts/check.sh
 ```
 
-This builds the core library and tests, runs the tests, and audits theorem
-assumptions. Run `lake exe proof-experiment` separately when changing that
+This builds the core library and node executable, runs the Lean tests and a
+two-process TCP test, and audits theorem assumptions. The process test requires
+Python 3 and permission to use loopback sockets. Run `lake exe proof-experiment` separately when changing that
 experiment; its checks are included in the experiment command.
 
 Keep the Lean version pinned and add dependencies only when a concrete case

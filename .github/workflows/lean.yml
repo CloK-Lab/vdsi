@@ -19,5 +19,7 @@ jobs:
           build: true
       - name: Run core tests
         run: lake exe tests
+      - name: Test independent node processes
+        run: python3 Tests/node_processes.py
       - name: Audit theorem assumptions
         run: lake env lean scripts/Audit.lean

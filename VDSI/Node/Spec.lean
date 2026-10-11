@@ -1,6 +1,14 @@
-import VDSI.Node.Message
+import VDSI.Node
 
 namespace VDSI
+
+/-- Restoration keeps the supplied node ID and exact participant list when IDs
+are unique; otherwise it rejects the list. This concerns decoded data, not disk IO. -/
+def RestoreRegistrySpec (id : NodeId) (participants : List Participant)
+    (result : Option Node) : Prop :=
+  match result with
+  | some restored => restored.id = id ∧ restored.registry.participants = participants
+  | none => ¬ UniqueIds participants
 
 /-- Requirements for processing registration requests in order.
 Each item in the request list asks to register that participant.
@@ -28,18 +36,32 @@ inductive ProcessRegistrationsSpec : Node → List Participant → Node → Prop
       (remainingMeetsSpec : ProcessRegistrationsSpec before remaining after) :
       ProcessRegistrationsSpec before (participant :: remaining) after
 
-/-- A message for this node follows the registration rules, including duplicate
-rejection. A message for another node leaves the entire local node unchanged. -/
-def ReceiveRegistrationSpec
-    (before : Node) (message : RegistrationMessage) (after : Node) : Prop :=
-  if message.recipient = before.id then
-    ProcessRegistrationsSpec before [message.participant] after
-  else
-    after = before
-
 /-- Both lists contain the same participant IDs. Order and repetition do not matter. -/
 def SameParticipantIds (left right : List Participant) : Prop :=
   ∀ id, IdIsRegistered id left ↔ IdIsRegistered id right
+
+/-- Every participant ID in the left list also occurs in the right list. -/
+def ParticipantIdsIncluded (left right : List Participant) : Prop :=
+  ∀ id, IdIsRegistered id left → IdIsRegistered id right
+
+/-- `ν₁ ≈ ν₂` compares registered participant ID sets only. Node identities,
+list order, and any future participant fields are not compared. -/
+scoped notation:50 ν₁:51 " ≈ " ν₂:51 =>
+  SameParticipantIds (Registry.participants (Node.registry ν₁))
+    (Registry.participants (Node.registry ν₂))
+
+/-- `ν₁ ⊑ ν₂` means that every participant ID registered at `ν₁` is also registered
+at `ν₂`. Neither symbol asserts delivery or agreement of other node state. -/
+scoped notation:50 ν₁:51 " ⊑ " ν₂:51 =>
+  ParticipantIdsIncluded (Registry.participants (Node.registry ν₁))
+    (Registry.participants (Node.registry ν₂))
+
+/-- Merging preserves the node's identity and produces exactly the union of the
+local and incoming ID sets. Each resulting registry also carries `UniqueIds`. -/
+def MergeRegistrySpec (before : Node) (incoming : List Participant) (after : Node) : Prop :=
+  after.id = before.id ∧ ∀ id,
+    IdIsRegistered id after.registry.participants ↔
+      IdIsRegistered id before.registry.participants ∨ IdIsRegistered id incoming
 
 /-- Nodes starting with the same IDs must finish with the same IDs if their
 request lists contain the same IDs. Request order and duplicate counts may differ.
@@ -47,10 +69,10 @@ This compares processed requests; it does not guarantee message delivery. -/
 def RegistrationAgreementSpec
     (leftRequests rightRequests : List Participant)
     (leftBefore rightBefore leftAfter rightAfter : Node) : Prop :=
-  SameParticipantIds leftBefore.registry.participants rightBefore.registry.participants →
+  leftBefore ≈ rightBefore →
   SameParticipantIds leftRequests rightRequests →
   ProcessRegistrationsSpec leftBefore leftRequests leftAfter →
   ProcessRegistrationsSpec rightBefore rightRequests rightAfter →
-  SameParticipantIds leftAfter.registry.participants rightAfter.registry.participants
+  leftAfter ≈ rightAfter
 
 end VDSI

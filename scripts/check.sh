@@ -6,6 +6,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
 lake build
 lake exe tests
+python3 Tests/node_processes.py
 lake env lean scripts/Audit.lean
 
-echo "All system checks passed: build, tests, and axiom audit."
+echo "All system checks passed: build, core tests, node processes, and axiom audit."

@@ -1,11 +1,11 @@
 import Tests.Registration
-import Tests.Messaging
-import Tests.Network
+import Tests.Wire
+import Tests.System
 
 def main : IO Unit := do
   Tests.Registration.run
   IO.println "[PASS] Registration"
-  Tests.Messaging.run
-  IO.println "[PASS] Messaging"
-  Tests.Network.run
-  IO.println "[PASS] Network"
+  Tests.Wire.run
+  IO.println "[PASS] Wire"
+  Tests.System.run
+  IO.println "[PASS] System"
