@@ -118,6 +118,33 @@ theorem execution_preserves_safety (σ σ' : State n) (τ : List (Action n))
     ν.registry.participants id π ν.registry.idsAreUnique).mpr ⟨member, matchingId⟩,
     matchingId⟩
 
+/-- Successful delivery establishes a saved registration at the recipient.
+The system safety theorem then preserves it through every finite continuation.
+Delivery and storage success are premises of the specification; this theorem
+does not establish eventual delivery or verify the filesystem implementation. -/
+theorem successful_delivery_satisfies_spec (σ : State n) (messageIndex : Nat) :
+    SuccessfulDeliverySpec σ messageIndex := by
+  intro consistent snapshot queued recipientOnline π inSnapshot τ
+  cases online : (σ.nodes snapshot.recipient).memory with
+  | none => simp [online] at recipientOnline
+  | some ν =>
+      let delivered := step σ (.deliver messageIndex true)
+
+      -- A successful delivery leaves the system in a consistent state.
+      have afterDeliveryConsistent : Consistent delivered :=
+        (step_preserves_state σ delivered (.deliver messageIndex true) consistent rfl).1
+
+      -- Merge includes every incoming ID; successful storage saves that registry.
+      have savedAfterDelivery : IdIsRegistered π.id
+          (delivered.nodes snapshot.recipient).saved.participants := by
+        simp only [delivered, step, queued, State.update, ↓reduceIte, LocalState.commit, online]
+        apply ((Node.mergeRegistry_satisfies_spec ν snapshot.participants).2 π.id).mpr
+        exact Or.inr (List.mem_map.mpr ⟨π, inSnapshot, rfl⟩)
+
+      -- All later actions preserve this saved ID and allow lookup when online.
+      exact (execution_preserves_safety delivered (ℰ τ delivered) τ
+        afterDeliveryConsistent rfl).2.2 snapshot.recipient π.id savedAfterDelivery
+
 /-- Once an online node completes a registration and its save succeeds, that ID
 remains saved through every subsequent schedule, including stops and restarts.
 Whenever that node is online, its real registry lookup can find the participant. -/

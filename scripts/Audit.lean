@@ -4,6 +4,10 @@ import VDSI
 #guard_msgs in
 #print axioms VDSI.System.execution_preserves_safety
 
+/-- info: 'VDSI.System.successful_delivery_satisfies_spec' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.System.successful_delivery_satisfies_spec
+
 /-- info: 'VDSI.System.confirmed_registration_survives_execution' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
 #print axioms VDSI.System.confirmed_registration_survives_execution

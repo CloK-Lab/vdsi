@@ -1,4 +1,4 @@
-import VDSI.System.Model
+import VDSI.System.Execution
 
 namespace VDSI.System
 
@@ -30,6 +30,23 @@ def SafetySpec (σ σ' : State n) : Prop :=
   (∀ i, UniqueIds (σ'.nodes i).saved.participants) ∧
   ∀ i id, IdIsRegistered id (σ.nodes i).saved.participants →
     SavedAndQueryable σ' i id
+
+/-- Requirement for successful snapshot delivery:
+from a consistent state, the selected snapshot exists and its recipient is
+online. The first action delivers that snapshot with successful storage (`true`).
+Every participant ID in the snapshot must then remain saved through any finite
+continuation `τ`, and be queryable whenever the recipient is online.
+Taking `τ = []` checks the state immediately after delivery; later actions may
+include stops and restarts under the existing storage assumptions.
+This specifies the effect of a successful delivery, not that delivery occurs. -/
+def SuccessfulDeliverySpec (σ : State n) (messageIndex : Nat) : Prop :=
+  Consistent σ →
+  ∀ snapshot, σ.pending[messageIndex]? = some snapshot →
+    (σ.nodes snapshot.recipient).memory.isSome = true →
+    ∀ π, π ∈ snapshot.participants →
+      ∀ τ : List (Action n),
+        SavedAndQueryable (ℰ (.deliver messageIndex true :: τ) σ)
+          snapshot.recipient π.id
 
 /-- The liveness target for an infinite execution: any saved ID eventually
 reaches every node, which can then answer a local lookup. This is a target, not
