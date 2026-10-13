@@ -55,7 +55,7 @@ illustrative inputs from measurements.
 ## Source and layout
 
 The approved diagram and its generator are retained as a visual reference.
-They describe an earlier design, not the implementation status of this branch.
+They describe an earlier design, not the current implementation.
 Earlier case diagrams and generators remain in the
 [archive](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 

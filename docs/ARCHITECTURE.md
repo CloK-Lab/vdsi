@@ -1,7 +1,7 @@
 # Architecture status
 
-The `feature/participant-model` branch contains a Lean library for participant
-registration, node operations, and system execution, with specifications and proofs.
+The project contains a Lean library for participant registration, ID sampling,
+node operations, and system execution, with specifications and proofs.
 `Tests/` checks the core library. `Experiments/` contains the separate proof-task
 model, candidate submissions, kernel verification, and experiment checks.
 The core library does not import experiments.
@@ -63,6 +63,11 @@ remains saved and queryable whenever its node is online. The model assumes one
 writer per node, intact saved data, and exact successful reads/writes. It omits
 crashes inside an unfinished save-and-publish operation. These assumptions are
 not proofs of the filesystem, locking implementation, or IO refinement.
+`SuccessfulDeliverySpec` and `successful_delivery_satisfies_spec` additionally
+establish that every ID in a successfully delivered snapshot is saved at its
+online recipient and remains saved through any finite continuation. Successful
+delivery and storage are premises; the theorem does not ensure that a message
+will eventually arrive.
 `Tests/System.lean` checks delayed delivery, recipient isolation, empty queues,
 interleaved registrations, reordered and duplicate snapshots, failed storage,
 and independent recovery. Eventual propagation still
@@ -70,8 +75,9 @@ requires a formal execution and fairness model; it is not implied by safety.
 
 The previous source tree, models, proofs, and architecture proposal are preserved
 at [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
-Their directory structure and modeling choices are not requirements for this
-restart. The reference models remain available there for later comparisons.
+Their directory structure and modeling choices are not requirements for the
+current implementation. The reference models remain available there for later
+comparisons.
 
 ## Developing the model
 
@@ -87,4 +93,4 @@ Tests, experiments, and proofs must use the same operations.
 Implement the project's runtime in Lean. External infrastructure can supply
 reference designs and comparison cases. A common specification and explicit
 observation mappings are required for claims about correspondence; no such
-comparison is implemented in this branch.
+comparison is implemented in the current library.

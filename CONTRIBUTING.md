@@ -4,12 +4,13 @@
 with changes small enough to read and explain together. Use English for
 documentation and code comments.
 
-## Rebuilding the model
+## Developing the model
 
-This branch rebuilds the model from basic definitions. The core library currently
-covers participant registration, node operations, and a system model of snapshot
-delivery and recovery. The TCP and storage runtime lives in `VDSI/Node/Runtime/`;
-task experiments live separately in `Experiments/`.
+The model develops from basic definitions. The core library currently covers
+participant registration, the collision probability of uniformly sampled IDs,
+node operations, and a system model of snapshot delivery and recovery. The TCP
+and storage runtime lives in `VDSI/Node/Runtime/`; task experiments live separately
+in `Experiments/`.
 The previous implementation and notes are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 Consult them as references; introduce a previous definition only after its

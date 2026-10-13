@@ -6,18 +6,31 @@
 tokenomics, using formal models, specifications, executable code, and proofs in
 Lean.
 
-## This branch
+## Current implementation
 
-`feature/participant-model` starts the model again from its basic definitions.
-It contains participant registration, a system model of nodes and snapshot
-delivery, and a Lean TCP executable for running independent processes on one machine. Nodes keep
-their own registries and exchange snapshots directly with configured peers.
-Proof-task experiments are separate from the core library.
+The executable prototype registers and looks up participant IDs across independent
+node processes on one machine. Nodes keep their own registries, exchange snapshots
+with configured peers, and save and restore their state locally. Registration,
+lookup, and snapshot merging have formal specifications and proofs. A separate
+system model proves preservation of saved registrations, including registrations
+received in a successfully delivered snapshot.
+
+The ID sampling model proves the birthday bound for independent uniform
+`bits`-bit values, including collision risk below `2^-128` for at most one
+billion 256-bit draws across the system. The probability is defined by counting
+actual colliding outcomes. Conversion to `ParticipantId` preserves the sampled
+value. The runtime still uses manually supplied IDs; a random generator and its
+conformance to the sampling model are not implemented or verified.
+
+The project does not yet implement a blockchain, consensus, wallet authority,
+payments, or token issuance and redemption. The optional proof-task experiment
+checks prewritten Lean submissions with the kernel; it is separate from the
+core library and does not call an AI prover.
 
 The previous code, proofs, notes, and reference tools are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483),
-also named `archive/pre-participant-model-20261010`. They can be consulted
-without importing their definitions into this branch.
+also named `archive/pre-participant-model-20261010`. They are reference material
+and are not part of the current executable system.
 
 ## Files
 
@@ -40,12 +53,12 @@ them. See [Contributing](CONTRIBUTING.md) and the
 
 ## Run
 
-Run these commands from the repository root:
-
 The probability proof uses mathlib v4.34.0, pinned to commit `5ed2965` in
 `lakefile.toml` and `lake-manifest.json`. On a fresh checkout, `lake update`
 fetches the dependencies and mathlib's compiled cache; this requires network
 access.
+
+Run these commands from the repository root:
 
 | Command | Purpose |
 | --- | --- |
@@ -54,9 +67,7 @@ access.
 | `lake exe node ID PORT [PEER_PORT ...]` | Run an independent node on loopback |
 | `lake exe proof-experiment` | Run the separate proof-task experiment, including its own regression checks |
 
-The system check does not build or run experiments. The proof experiment uses
-prewritten submissions and real Lean kernel checking; it does not call an AI
-prover.
+The system check does not build or run experiments.
 
 To try two nodes, run `lake exe node 1 7101 7102` in one terminal and
 `lake exe node 2 7102 7101` in another. Enter `register 1` in the first and
@@ -91,16 +102,11 @@ save-and-publish operations; the IO runtime's correspondence to the model is not
 formally proved. Eventual propagation is specified but not yet proved.
 
 For documentation, run `npm ci` once, then `npm run build` or `npm run dev`.
-See the [notebook guide](docs/README.md). This branch's local overview describes
-the restart; the [published notebook](https://www.clok.tech/docs/give-and-take)
-continues to follow the main branch.
-
-The ID sampling model proves the birthday bound for independent uniform
-`bits`-bit values, including collision risk below `2^-128` for at most one
-billion 256-bit draws across the system. The probability is defined by counting
-actual colliding outcomes. Conversion to `ParticipantId` preserves the sampled
-value. This is a verified probability model: the runtime still uses manually
-supplied IDs, and no random generator, entropy source, private-key mechanism,
-or wallet-address derivation is implemented or verified.
+See the [overview](docs/Overview.mdx), the
+[ID collision note](VDSI/IdGeneration/Note.mdx), and the
+[notebook guide](docs/README.md). The
+[published notebook](https://www.clok.tech/docs/give-and-take) uses a pinned
+repository commit. Successful checks on `main` make an update eligible for the
+website's documentation sync; publication requires its update PR to be merged.
 
 Licensed under [Apache-2.0](LICENSE).

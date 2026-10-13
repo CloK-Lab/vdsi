@@ -14,8 +14,8 @@ tokenized assets, incentives, and safety are parts of that system.
   separate from project execution and record the actual implementation status.
 - The previous code and notes are preserved at commit
   `43f26201474a144b68924d2b485a0e3fd857c483` on
-  `archive/pre-participant-model-20261010`. This branch restarts the model from
-  basic definitions. Consult archived models as references; do not restore the
+  `archive/pre-participant-model-20261010`. The current model starts from basic
+  definitions. Consult archived models as references; do not restore the
   whole implementation or predefine its architecture without discussing the
   next small modeling question with the user.
 - Compare reference and native models through explicit common specifications
