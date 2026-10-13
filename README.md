@@ -24,6 +24,7 @@ without importing their definitions into this branch.
 | File | Purpose |
 | --- | --- |
 | `VDSI.lean`, `VDSI/` | Core library: participants, registration, nodes, and system execution |
+| `VDSI/IdGeneration/` | Finite uniform ID sampling model, collision-risk specification, and birthday-bound proof |
 | `VDSI/System/` | System model, execution schedules, safety specification and proofs, and an unproved propagation target |
 | `NodeMain.lean`, `VDSI/Node/Runtime/` | Command-line entry, TCP node process, snapshots, and wire encoding |
 | `Tests/` | Core regression tests and a two-process TCP integration test |
@@ -40,6 +41,11 @@ them. See [Contributing](CONTRIBUTING.md) and the
 ## Run
 
 Run these commands from the repository root:
+
+The probability proof uses mathlib v4.34.0, pinned to commit `5ed2965` in
+`lakefile.toml` and `lake-manifest.json`. On a fresh checkout, `lake update`
+fetches the dependencies and mathlib's compiled cache; this requires network
+access.
 
 | Command | Purpose |
 | --- | --- |
@@ -88,5 +94,13 @@ For documentation, run `npm ci` once, then `npm run build` or `npm run dev`.
 See the [notebook guide](docs/README.md). This branch's local overview describes
 the restart; the [published notebook](https://www.clok.tech/docs/give-and-take)
 continues to follow the main branch.
+
+The ID sampling model proves the birthday bound for independent uniform
+`bits`-bit values, including collision risk below `2^-128` for at most one
+billion 256-bit draws across the system. The probability is defined by counting
+actual colliding outcomes. Conversion to `ParticipantId` preserves the sampled
+value. This is a verified probability model: the runtime still uses manually
+supplied IDs, and no random generator, entropy source, private-key mechanism,
+or wallet-address derivation is implemented or verified.
 
 Licensed under [Apache-2.0](LICENSE).

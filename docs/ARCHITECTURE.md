@@ -6,6 +6,16 @@ registration, node operations, and system execution, with specifications and pro
 model, candidate submissions, kernel verification, and experiment checks.
 The core library does not import experiments.
 
+`IdGeneration/Model.lean` defines finite samples, their value-preserving
+conversion to `ParticipantId`, the collision event, and its exact probability
+under the uniform product distribution. `Spec.lean` requires collision risk
+below `2^-128` for at most one billion independent uniform 256-bit draws.
+`Verification.lean` proves the general birthday bound and this concrete
+requirement using pinned mathlib v4.34.0. Small enumerated examples are checked
+in `Tests/IdGeneration.lean`. The runtime does not import this sampling model
+and still takes manually supplied IDs. No random source or generator is
+implemented, and no IO conformance or private-key/address security is proved.
+
 `Node.lean` defines one node and its registry operations.
 `Node/Spec.lean`, `Lemmas.lean`, and `Verification.lean` state and prove their properties.
 `System/` combines nodes, local saved state, and pending snapshots in one model.

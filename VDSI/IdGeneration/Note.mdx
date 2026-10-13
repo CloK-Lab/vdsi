@@ -1,0 +1,106 @@
+---
+title: "Identifier collision probability"
+description: "A verified birthday bound for independent uniform identifiers."
+slug: identifier-collision-probability
+order: 1
+---
+
+This note defines a finite probability model for independently and uniformly
+sampled identifiers and proves its collision bound. For at most one billion
+256-bit samples, the probability of any repeated identifier is below $2^{-128}$.
+The proof covers sampling outcomes and their conversion to participant IDs;
+the node runtime still accepts manually supplied natural numbers and has no
+random ID generator. Randomness assumptions follow the distinction between
+output size and entropy in [RFC 4086](https://www.rfc-editor.org/rfc/rfc4086.html),
+especially Sections 2 and 6.1.1.
+
+## What counts as a collision?
+
+A $b$-bit draw is a value from $0$ through $2^b-1$. Conversion to a
+`ParticipantId` preserves that value without hashing or truncation.
+
+```lean4 file="./Model.lean" declaration="toParticipantId"
+```
+
+The theorem `toParticipantId_eq_iff` proves that two converted IDs are equal
+exactly when their sampled values are equal. A collision means that two
+distinct generation positions produce equal IDs, regardless of where or when
+they were generated.
+
+```lean4 file="./Model.lean" declaration="HasCollision"
+```
+
+## The sampling model
+
+An outcome is a function assigning one $b$-bit value to each of $n$ positions.
+All $(2^b)^n$ outcomes have equal probability. This uniform product model
+expresses independent, uniform sampling across every participant and location.
+The probability of a collision is the number of colliding outcomes divided by
+the number of all outcomes.
+
+```lean4 file="./Model.lean" declaration="collisionProbability"
+```
+
+For example, two independent 2-bit draws have 16 equally likely outcomes.
+Exactly four collide: $(0,0)$, $(1,1)$, $(2,2)$, and $(3,3)$. Their probability
+is $4/16=1/4$. With three draws, 24 of the 64 outcomes have three different
+values, so the collision probability is $40/64=5/8$. The executable tests
+enumerate these small cases using the same definition as the proof.
+
+## The bound
+
+For each pair of distinct positions, fixing equal values removes one free
+choice from the outcome. Its collision probability is at most $1/2^b$.
+There are $\binom n2$ pairs. Adding their probabilities bounds the probability
+of their union, even though one outcome can collide at several pairs:
+
+$$
+\Pr[\text{at least one collision}]
+\leq \frac{\binom n2}{2^b}
+= \frac{n(n-1)}{2^{b+1}}.
+$$
+
+The proof establishes a counting inequality before dividing by the total
+number of outcomes. It does not assume the birthday bound or estimate the
+probability by random testing.
+
+```lean4 file="./Verification.lean" declaration="birthday_bound"
+```
+
+In the three-draw, 2-bit example, the bound is $3/4$, while the exact probability
+is $5/8$. The bound can overcount collisions; it need not be an equality.
+
+## A concrete requirement
+
+Here $n$ counts **all generation attempts across the system**, including values
+later discarded. The chosen requirement applies to at most $10^9$ attempts,
+with a risk limit of $2^{-128}$.
+
+```lean4 file="./Spec.lean" declaration="BillionIdRiskSpec"
+```
+
+For $b=256$ and $n=10^9$, the upper bound is approximately
+$4.32\times10^{-60}$. Lean verifies the strict comparison to $2^{-128}$ using
+exact arithmetic, and proves the requirement for every smaller number of draws.
+
+<CodePreview title="Proof of the concrete requirement">
+
+```lean4 file="./Verification.lean" declaration="billion_ids_satisfy_risk_spec"
+```
+
+</CodePreview>
+
+## What the proof assumes
+
+The distribution on outcomes is part of the model. Two devices that reuse the
+same sampled value can each have a uniform marginal distribution while always
+colliding; they do not satisfy the independent product model. Merely storing
+256 bits does not establish 256 bits of independent randomness.
+
+The proof does not verify an entropy source, an operating-system random API,
+a pseudorandom generator, private-key generation, or derived wallet addresses.
+The conversion above is executable but does not acquire randomness. No runtime
+generator has yet been connected to this model, so the theorem does not assert
+a probability bound for the current `register NATURAL_NUMBER` command. The
+existing registration rule rejects an already recorded ID; that deterministic
+property is separate from the probability that two generation attempts collide.

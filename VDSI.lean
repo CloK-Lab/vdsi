@@ -1,4 +1,7 @@
 import VDSI.Participant
+import VDSI.IdGeneration.Model
+import VDSI.IdGeneration.Spec
+import VDSI.IdGeneration.Verification
 import VDSI.Registry
 import VDSI.Node
 import VDSI.Node.Spec

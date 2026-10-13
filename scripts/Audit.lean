@@ -1,5 +1,17 @@
 import VDSI
 
+/-- info: 'VDSI.IdGeneration.toParticipantId_eq_iff' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.IdGeneration.toParticipantId_eq_iff
+
+/-- info: 'VDSI.IdGeneration.birthday_bound' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.IdGeneration.birthday_bound
+
+/-- info: 'VDSI.IdGeneration.billion_ids_satisfy_risk_spec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.IdGeneration.billion_ids_satisfy_risk_spec
+
 /-- info: 'VDSI.System.execution_preserves_safety' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
 #print axioms VDSI.System.execution_preserves_safety

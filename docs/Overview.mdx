@@ -3,7 +3,13 @@ digital tokenomics as part of a verified decentralized superintelligence
 (DSI) system. We develop its models, specifications, executable operations, and
 proofs natively in [Lean 4](https://lean-lang.org/).
 
-This version contains the project setup. No participant model, ledger, payment
-operation, or system property has been defined or proved yet. The earlier
-models and notes are available in the
+The current library implements participant registration and snapshot merging,
+with proofs of registry uniqueness and preservation of saved registrations in
+a system execution model. A TCP prototype runs independent nodes on one machine.
+It has no ledger or payment implementation.
+
+[Identifier collision probability](../VDSI/IdGeneration/Note.mdx) develops a
+finite sampling model and proves a risk bound for independent uniform IDs.
+The runtime still accepts manually supplied IDs; a random generator is not
+implemented. The earlier models and notes are available in the
 [archived version](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
