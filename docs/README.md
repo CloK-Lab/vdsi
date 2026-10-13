@@ -6,8 +6,9 @@ Name and link the main reference documents where relevant. Develop worked
 examples in the relevant subsections, explain the modeling choices, and connect
 the Lean definitions to the behavior being studied. Include
 enough reasoning for a reader to follow the result. Prefer revising an unclear
-note to adding another topic. Earlier worked examples are preserved in the
-[archive](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
+note to adding another topic. Earlier worked examples remain published from
+[`studies/`](../studies/README.md), with their original slugs and exact archived
+source excerpts. Keep their status distinct from the current implementation.
 
 ## Preview locally
 
@@ -40,6 +41,11 @@ Use a unique slug and choose an order for the reading sequence. Add `draft: true
 while a note is unfinished; drafts stay out of the site. Preserve slugs,
 section labels, and ordering when moving source directories. Reading groups
 do not prescribe code dependencies or directories.
+
+The navigation retains Preliminaries and Examples for the preserved studies,
+followed by Current implementation for the participant registry and collision
+proof. Source location does not determine publication status: `clok.json`
+selects both `studies/**/Note.mdx` and `VDSI/**/Note.mdx`.
 
 The page supplies its own title, so start the body with prose. Use ordinary
 Markdown for the explanation and `$...$` for inline math. There is no required
@@ -77,8 +83,9 @@ Follow the [diagram style](DIAGRAMS.md): editable SVG, CloK typography,
 and consistent colors for task interaction, spending authority, and settlement.
 Use isometric nodes for module relationships, proportional bands for resource
 allocation, ledger views for balance changes, and state graphs for alternative
-outcomes. The retained `tools/draw-native-system.py` supplies the approved
-geometry. Its diagram is a style reference, not the current implementation.
+outcomes. `tools/draw-hairline-figures.mjs` draws the overview and module figures
+with Hairline's geometry and the project palette. The overview expresses research
+scope; the module figure describes the preserved paid-task model.
 
 ## Shared documentation format
 
@@ -86,6 +93,8 @@ geometry. Its diagram is a style reference, not the current implementation.
 renderer and styling follow
 [`same-but-better`](https://github.com/CloK-Lab/same-but-better/tree/6891ef09fa04860573561909c02841e156bf852c),
 adapted under Apache-2.0. The notebook builds independently of other repositories.
+Keep the KaTeX stylesheet version aligned with the `rehype-katex` renderer;
+mixing 0.19 styles with 0.16 output breaks superscripts and fractions.
 
 Read the notebook on [CloK](https://www.clok.tech/docs/give-and-take), where the
 main website supplies the navbar. The local Astro preview shows the document body.

@@ -11,6 +11,7 @@
     "format": "mdx",
     "entry": "docs/Overview.mdx",
     "include": [
+      "studies/**/Note.mdx",
       "VDSI/**/Note.mdx"
     ]
   }

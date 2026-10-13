@@ -1,0 +1,186 @@
+{
+  "commit": "43f26201474a144b68924d2b485a0e3fd857c483",
+  "purpose": "Exact archived source files used by notebook excerpts; not a buildable library or current runtime.",
+  "files": [
+    {
+      "file": "studies/Cases/PaidCall/Execution.lean",
+      "source": "VDSI/Cases/PaidCall/Execution.lean",
+      "sha256": "2aca6aa29379ac3b80b913329649ad010fc54678a7960f30a3906f56cdaf8daa"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Model.lean",
+      "source": "VDSI/Cases/PaidCall/Model.lean",
+      "sha256": "47d43ca1e6e0a3b67c8f883e67db36b2b9377aa40cb782b0492026f1a8788a55"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Retry/Execution.lean",
+      "source": "VDSI/Cases/PaidCall/Retry/Execution.lean",
+      "sha256": "696804697279bcf6cbc212c36744bc97d95e549a8c065976b270823d32418172"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Retry/Model.lean",
+      "source": "VDSI/Cases/PaidCall/Retry/Model.lean",
+      "sha256": "3b358b19656290448dcc57443691a29b7419834aaf7eec6e56953b4e979e9c2b"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Retry/Spec.lean",
+      "source": "VDSI/Cases/PaidCall/Retry/Spec.lean",
+      "sha256": "2c9b6e05d4c52b3893d50854b7b204ac63e45d3097ee6bb002038f6984e14591"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Retry/Verification.lean",
+      "source": "VDSI/Cases/PaidCall/Retry/Verification.lean",
+      "sha256": "0b9a7569ac7912a7c889d47cbd40ae779054e6c7f9bbe9012b3d3bcee9885ae5"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Spec.lean",
+      "source": "VDSI/Cases/PaidCall/Spec.lean",
+      "sha256": "e8995a2d650a02694526e9a4213c4559a90d01d4848ab272eb04842452c1e92a"
+    },
+    {
+      "file": "studies/Cases/PaidCall/Verification.lean",
+      "source": "VDSI/Cases/PaidCall/Verification.lean",
+      "sha256": "f7d73c1b466abccdc55993a05d90efebcd99462bb6dab71f2d9ae64b5d849730"
+    },
+    {
+      "file": "studies/Cases/PaidTask/Examples.lean",
+      "source": "VDSI/Cases/PaidTask/Examples.lean",
+      "sha256": "1eef9d8ce15025383c7c646d24b94f9531aa8f210a8f067cc458ce2d7276c363"
+    },
+    {
+      "file": "studies/Cases/PaidTask/Payment.lean",
+      "source": "VDSI/Cases/PaidTask/Payment.lean",
+      "sha256": "a0798f0e81d23d6f6dcf19e39ae9e736664ff1764a004afb0b833513ab64f416"
+    },
+    {
+      "file": "studies/Cases/PaidTask/Spec.lean",
+      "source": "VDSI/Cases/PaidTask/Spec.lean",
+      "sha256": "d529322fb005ff35beb11cd6b59dde667ce84a0d9c4ac1391d5545625a9a74be"
+    },
+    {
+      "file": "studies/Cases/PaidTask/System/Execution.lean",
+      "source": "VDSI/Cases/PaidTask/System/Execution.lean",
+      "sha256": "6ae06eab8ce6066ef2e6b0ecefadcebad4484e43b81371d952d43de8373eb356"
+    },
+    {
+      "file": "studies/Cases/PaidTask/System/Model.lean",
+      "source": "VDSI/Cases/PaidTask/System/Model.lean",
+      "sha256": "8da094839738b530a572a14f8dea041160bbf93b51c6a3f7ab24c54941c61ed5"
+    },
+    {
+      "file": "studies/Foundation/Asset.lean",
+      "source": "VDSI/Foundation/Asset.lean",
+      "sha256": "b1e0d1865a28329678d7e0b13b809c64107e36acb01a786a876d85c769898388"
+    },
+    {
+      "file": "studies/Foundation/Quantities/Checks.lean",
+      "source": "VDSI/Foundation/Quantities/Checks.lean",
+      "sha256": "68e341a4e70b8628b22a5e7c197d89f919455f3bd2bf9cf9b255004a28ee332c"
+    },
+    {
+      "file": "studies/Foundation/Quantities/Execution.lean",
+      "source": "VDSI/Foundation/Quantities/Execution.lean",
+      "sha256": "c055dd0829b555087760c39fa607aa2450b6fd059621793c3ed1d976cd5c27a6"
+    },
+    {
+      "file": "studies/Foundation/Quantities/Model.lean",
+      "source": "VDSI/Foundation/Quantities/Model.lean",
+      "sha256": "70a79ce3be1007a0d80d2f06a5b2c06957fee7beb7d822d7533338cca74ca14c"
+    },
+    {
+      "file": "studies/Foundation/Quantities/Verification.lean",
+      "source": "VDSI/Foundation/Quantities/Verification.lean",
+      "sha256": "50ea8bdd911637f792febd1825ee301c09d788361aa0594b79302faed3212167"
+    },
+    {
+      "file": "studies/Native/Wallet/Model.lean",
+      "source": "VDSI/Native/Wallet/Model.lean",
+      "sha256": "ad45e5e83932ed47aea5d4f4dcc6bdce2ba19e8599a7002ea4da1630699b4d72"
+    },
+    {
+      "file": "studies/Native/Wallet/Spec.lean",
+      "source": "VDSI/Native/Wallet/Spec.lean",
+      "sha256": "657b0ea525cb01d46c1f35fffdedf07879aafc0502021687e83abf21ea09a0b6"
+    },
+    {
+      "file": "studies/Reference/A2A/Execution.lean",
+      "source": "VDSI/Reference/A2A/Execution.lean",
+      "sha256": "ba802c4158c91393475e7bc0a63e5d0c7ffcf8be0a66775e33ca01ad4be46fc1"
+    },
+    {
+      "file": "studies/Reference/A2A/Model.lean",
+      "source": "VDSI/Reference/A2A/Model.lean",
+      "sha256": "ccfdbd0f134093fedf3a9ee2d0a5a8755726ea736255a3bd13ce55025151b84b"
+    },
+    {
+      "file": "studies/Reference/ERC20/Checks.lean",
+      "source": "VDSI/Reference/ERC20/Checks.lean",
+      "sha256": "db493e623de6cc47e40d695c5a9e1703f5f4928de9974d1f9f4f1ef43ac84236"
+    },
+    {
+      "file": "studies/Reference/ERC20/Execution.lean",
+      "source": "VDSI/Reference/ERC20/Execution.lean",
+      "sha256": "44dd351669a9fbd835eb935f5462e94c6c2b45858322ffc1ccb42c6ce7cd8d9e"
+    },
+    {
+      "file": "studies/Reference/ERC20/Model.lean",
+      "source": "VDSI/Reference/ERC20/Model.lean",
+      "sha256": "d6eef032faa1b4c193a697c830710a5cc3d9f2098afc7b3a18e0061c88f88e5b"
+    },
+    {
+      "file": "studies/Reference/Ethereum/Checks.lean",
+      "source": "VDSI/Reference/Ethereum/Checks.lean",
+      "sha256": "af5267e3edf43e1f19227e2388f6c7adabcfbdf64587f678fe4712c441009a6c"
+    },
+    {
+      "file": "studies/Reference/Ethereum/Examples.lean",
+      "source": "VDSI/Reference/Ethereum/Examples.lean",
+      "sha256": "fce405ce5c6adc095913f9bd4e42673ba0cb9feaa2a1ec210318a2f17648cd7c"
+    },
+    {
+      "file": "studies/Reference/Ethereum/Execution.lean",
+      "source": "VDSI/Reference/Ethereum/Execution.lean",
+      "sha256": "e5f75be36aad5af64894ff711099ef0fd3b3fe87cf7641c94af0fe87dab13ac9"
+    },
+    {
+      "file": "studies/Reference/Ethereum/Model.lean",
+      "source": "VDSI/Reference/Ethereum/Model.lean",
+      "sha256": "5a93a0507e6d561254f7bb9898fb036342a6dec21ac53cc12323f046639631f5"
+    },
+    {
+      "file": "studies/Reference/Ethereum/Spec.lean",
+      "source": "VDSI/Reference/Ethereum/Spec.lean",
+      "sha256": "272ccab84ebd8db239f266ef45552dc8942bf9b95431269719fcb08bc46ca466"
+    },
+    {
+      "file": "studies/Reference/Solana/Examples.lean",
+      "source": "VDSI/Reference/Solana/Examples.lean",
+      "sha256": "19ef421e7abaad6983d774694f262a67c41ec4a76b7736efeb7f5160a4a9dd23"
+    },
+    {
+      "file": "studies/Reference/Solana/Execution.lean",
+      "source": "VDSI/Reference/Solana/Execution.lean",
+      "sha256": "e7ce8b22d67ddb5e79e4c84d7d656a9c7558fec1cabff316501f2d72ad7faffd"
+    },
+    {
+      "file": "studies/Reference/Solana/Model.lean",
+      "source": "VDSI/Reference/Solana/Model.lean",
+      "sha256": "44a38d822dee6c36a29305f5c61d8a0449a932d4791527363d154b22cd5bb440"
+    },
+    {
+      "file": "studies/Reference/Solana/Spec.lean",
+      "source": "VDSI/Reference/Solana/Spec.lean",
+      "sha256": "6f6017bf309762cd54f3443765986ba9a6542fc1ac584c4968c9bf685c295f29"
+    },
+    {
+      "file": "studies/Reference/X402/Checks.lean",
+      "source": "VDSI/Reference/X402/Checks.lean",
+      "sha256": "f39f2391c41969713ce4df7749a2908fb109ac6e2c560fe5ddf67bc2684b8005"
+    },
+    {
+      "file": "studies/Reference/X402/Model.lean",
+      "source": "VDSI/Reference/X402/Model.lean",
+      "sha256": "18c29c788fb5426176f51af50c3b545f95f8c8ffcf1b8de65d063d1c506edf4e"
+    }
+  ]
+}

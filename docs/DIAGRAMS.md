@@ -1,14 +1,18 @@
 # Diagram style
 
-Use the approved [system diagram](assets/native-system.svg) as the visual reference
-for ν-DSI. Keep this guide in contributor documentation, not in the
-learning notes.
+Use the [overview](assets/economy-overview.svg) and
+[system diagram](assets/native-system.svg) as the visual references for ν-DSI.
+They use [Hairline](https://hairline.lucasmarkes.com/figures) geometry with the
+project's semantic colors and typography. Keep this guide in contributor
+documentation, not in the learning notes.
 
 ## Visual language
 
-- Dark background, lightly tinted surfaces, outlined shapes, and small line
-  icons. Use the reference cube geometry for actors and infrastructure; use the
-  diagram forms below when the subject is a quantity, a state, or a sequence.
+- Dark background, opaque plates, rounded silhouettes, a dim inset crease,
+  and a few identifying details. Use Hairline's 45-degree orthographic camera
+  and rounded prisms for actors and infrastructure. Paint back to front so
+  distant lines do not show through solids. Use the diagram forms below when
+  the subject is a quantity, a state, or a sequence.
 - Group modules by responsibility. Leave space between groups for labeled arrows.
   Prefer a few meaningful nodes over decorative detail.
 - Jost for module names and explanations; IBM Plex Mono for section labels.
@@ -54,27 +58,31 @@ illustrative inputs from measurements.
 
 ## Source and layout
 
-The approved diagram and its generator are retained as a visual reference.
-They describe an earlier design, not the current implementation.
-Earlier case diagrams and generators remain in the
-[archive](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
+The overview depicts research scope. The module diagram describes the preserved
+paid-task study, not the current participant-node runtime. Earlier case diagrams
+and their generators accompany the restored study notes.
 
-Author diagrams as editable SVG. Reuse the `cube`, `box`, `path`, and `txt`
-geometry in [the generator](../tools/draw-native-system.py), and keep generators
-alongside their outputs.
+Author diagrams as editable SVG. The
+[generator](../tools/draw-hairline-figures.mjs) imports the unchanged Hairline
+geometry module vendored at commit `a221785`; its source and MIT license are
+recorded in [`tools/vendor/hairline/`](../tools/vendor/hairline/README.md).
+Keep the rendering dependency at build time: the published notebook uses static
+SVG, without custom browser scripts or an animation dependency.
 
 ```sh
-python3 tools/draw-native-system.py
+node tools/draw-hairline-figures.mjs
 npm run build
 ```
 
 The script uses the fonts installed by `npm ci`. Embed font data and license
 metadata in SVG files. Include a title, description, and meaningful alt text.
 
-The reference uses a 1000 × 700 canvas, 2-unit connectors, 25–29-unit node titles,
-and 18–22-unit annotations. At rendered widths of 620px or less, use a compact
+Use a 1000-unit canvas, 1–1.6-unit strokes, 27–34-unit node titles, and
+19–22-unit annotations. At rendered widths of 620px or less, use a compact
 layout with larger labels. Preserve the module roles and interaction order.
-Check notebook and phone-width rendering.
+Check notebook and phone-width rendering. External labels and semantic colors
+adapt Hairline's geometry to explanatory diagrams; these are not interactive
+Hairline figures.
 
 Keep one canonical copy of each diagram. Explain each module and interaction
 in the accompanying note and identify proposed components explicitly.

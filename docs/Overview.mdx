@@ -1,43 +1,75 @@
-These notes study human-agent coordination and resource allocation through
-digital tokenomics as part of a verified decentralized superintelligence
-(DSI) system. We develop its models, specifications, executable operations, and
-proofs natively in [Lean 4](https://lean-lang.org/).
+These notes study how decentralized superintelligence (DSI) and digital
+tokenomics coordinate work and allocate physical and computational resources
+among people and agents. The economic mechanisms under study include resource
+pricing and funding, payment settlement, and rewards for contributions.
 
-## Participant registries
+We develop formal models, specifications, executable code, and proofs natively in
+[Lean 4](https://lean-lang.org/). The studies cover ledger transfers,
+spending authorization, and payment retries; the current prototype implements
+participant registries and a model of identifier collision probability.
+External protocols provide reference designs for these studies.
 
-The executable prototype runs independent node processes on one machine. Each
-node registers and looks up participant IDs, exchanges registry snapshots with
-configured peers, and saves and restores its state locally. For example, if one
-node registers ID 1 and another registers ID 2, a successful exchange gives both
-nodes the two IDs. Repeating an ID adds no duplicate entry.
+![Hardware, Compute, Software, and Science connect to a DSI network of people and agents. Blue represents building, verifying, and improving resources; purple represents wallet authority; gold represents tokenomics and settlement.](./assets/economy-overview.svg)
 
-The library proves that registration and snapshot merging preserve registry
-uniqueness. From a consistent state in the system execution model, saved
-registrations survive every finite continuation and remain queryable whenever
-their node is online. A
-successfully delivered and saved snapshot gives its recipient the same guarantee
-for every incoming ID. These proofs assume intact storage, one writer per node,
-and atomic save-and-publish operations. The TCP and filesystem implementation is tested;
-its correspondence to the model is not formally proved, and eventual delivery
-remains unproved.
+The diagram shows the project’s research scope. Wallets, payments, incentives,
+and chain settlement are subjects of study; they are not yet implemented in
+the current participant-node prototype.
 
-## Identifier collision probability
+## Preliminaries
 
-[Identifier collision probability](../VDSI/IdGeneration/Note.mdx) defines a
-finite model of independent uniform samples and proves the birthday bound. For
-at most one billion 256-bit draws across the whole system, the probability of
-any collision is below $2^{-128}$. Conversion to a participant ID preserves the
-sampled value. This is a probability-model result: the running prototype accepts
-manually supplied IDs and has no random ID generator.
+The preliminaries review reference protocols and define the objects used by
+the payment studies.
 
-## Implementation scope
+- [Modules and interactions](../studies/Cases/PaidTask/System/Note.mdx): an overview of the
+  environment and the relationships between its parts.
+- [Quantities and units](../studies/Foundation/Quantities/Note.mdx):
+  shared definitions for energy, time, asset amounts, nonces, and gas fees.
+- [Blockchain infrastructure](../studies/Reference/Ethereum/Note.mdx): Bitcoin, Ethereum,
+  and Solana: ledger state, transactions, account access, and fees.
+- [Assets and tokens](../studies/Reference/ERC20/Note.mdx): stablecoins for
+  pricing and payments, asset identity, and token balances and transfers.
+- [Wallets and authorization](../studies/Native/Wallet/Note.mdx): PASS's wallet
+  model and a concrete spending policy.
+- [Payment protocols and infrastructure](../studies/Reference/X402/Note.mdx):
+  x402 payment exchange, AP2 authorization, Circle Gateway settlement, and
+  Nevermined metering and billing.
+- [Agent communication](../studies/Reference/A2A/Note.mdx): Agent Cards, skills,
+  interfaces, and task states.
 
-The current system has no blockchain, consensus, wallet authority, ledger,
-payments, or token issuance and redemption. Participant registration and its
-safety properties provide basic identity records for the coordination system;
-they do not yet establish account ownership or monetary rules. The separate
-proof-task experiment checks prewritten Lean submissions with the kernel and
-does not call an AI prover.
+## Examples
 
-The earlier models and reference notes are available in the
-[archived version](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
+These worked examples retain the models and proofs from the
+[recorded study revision](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
+They are separate from the current node runtime.
+
+- [A paid task](../studies/Cases/PaidTask/Note.mdx): authorize a payment of 0.003 ETH,
+  update balances in wei, and return an echo result.
+- [One paid call](../studies/Cases/PaidCall/Note.mdx): reservation, settlement,
+  refund, conservation of funds, and recovery from a lost reply without a second payment.
+
+## Current implementation
+
+- [Participant registries](../VDSI/Node/Note.mdx): independent node processes,
+  duplicate rejection, snapshot exchange, and saved-state recovery.
+- [Identifier collision probability](../VDSI/IdGeneration/Note.mdx): a proved
+  birthday bound for independent uniform sampling. For at most one billion
+  256-bit draws, collision probability is below $2^{-128}$. The runtime has no
+  random ID generator yet.
+
+Registries establish identity records for coordination. They do not establish
+account ownership or monetary rules. The prototype currently has no blockchain,
+consensus, wallet authority, payments, or token issuance and redemption.
+
+## Run the prototype
+
+[Install the toolchain](https://lean-lang.org/install/), then run:
+
+```sh
+git clone https://github.com/CloK-Lab/vdsi.git
+cd vdsi
+./scripts/check.sh
+```
+
+The check builds the core, runs its tests, and audits theorem assumptions.
+[Participant registries](../VDSI/Node/Note.mdx#run-two-nodes) explains how to run
+two nodes. Each payment example gives commands for its separate study checkout.

@@ -1,0 +1,75 @@
+---
+title: "Participant registries"
+description: "Registration, snapshot exchange, and recovery in the current node prototype."
+slug: participant-registries
+order: 10
+section: Current implementation
+---
+
+This note describes the participant registry implemented by the current node
+prototype. Each node records IDs, exchanges snapshots with configured peers,
+and saves its state locally. The library specifies and proves registration
+and merge properties; a system model additionally proves preservation of saved
+registrations through finite execution schedules.
+
+## Register an identifier
+
+A participant currently contains only an ID. It carries no name, public key,
+ownership evidence, or spending authority.
+
+```lean4 file="./../Participant.lean" declaration="Participant"
+```
+
+Registration adds a participant when its ID is absent, and rejects an ID that
+is already present:
+
+```lean4 file="./../Registration.lean" declaration="register"
+```
+
+For example, registering 1 and then 2 produces two entries. Registering 1
+again leaves the registry unchanged. This ensures unique entries, but cannot
+distinguish two people who supply the same ID: the model records them as the
+same identifier. [Identifier collision probability](../IdGeneration/Note.mdx)
+studies how unlikely equal values are under independent uniform sampling.
+The running prototype still accepts manually supplied IDs.
+
+## Exchange snapshots
+
+Each node merges an incoming snapshot with its own registry. The specification
+requires preservation of the node's ID and exactly the union of the two ID sets:
+
+```lean4 file="./Spec.lean" declaration="MergeRegistrySpec"
+```
+
+If node A has ID 1 and node B has ID 2, a successful exchange gives both nodes
+the set `{1, 2}`. Repeated or reordered snapshots add no duplicate entries.
+This property assumes successful delivery; it does not ensure that isolated
+nodes will eventually communicate.
+
+## Run two nodes
+
+Start each command in a separate terminal from the repository root:
+
+```sh
+lake exe node 1 7101 7102
+lake exe node 2 7102 7101
+```
+
+Enter `register 1` in the first terminal and `register 2` in the second.
+After exchange, `show` in either terminal reports both IDs. Enter `quit` to
+stop a node. Restarting it restores its saved registry from
+`.vdsi/node-ID.json`. Use one running process per node ID in a working directory.
+
+## Persistence and proof scope
+
+The system model permits delayed, reordered, duplicated, and lost snapshots,
+failed saves, stops, and restarts. From a consistent state, saved registrations
+remain saved through every finite continuation and are queryable whenever
+their node is online. A successfully delivered and saved snapshot gives its
+recipient that guarantee for each incoming ID.
+
+These results assume intact storage, one writer per node, and atomic
+save-and-publish operations. The TCP and filesystem implementation is tested;
+its correspondence to the model is not formally proved. Eventual propagation
+remains an unproved specification. The runtime uses unauthenticated loopback
+TCP and does not implement consensus, wallet ownership, or financial settlement.

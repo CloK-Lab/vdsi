@@ -27,7 +27,9 @@ payments, or token issuance and redemption. The optional proof-task experiment
 checks prewritten Lean submissions with the kernel; it is separate from the
 core library and does not call an AI prover.
 
-The previous code, proofs, notes, and reference tools are preserved at
+The protocol notes and payment examples are retained in [the notebook](docs/Overview.mdx).
+Their source excerpts live in [`studies/`](studies/README.md), separate from the
+current runtime. The complete previous code, proofs, and reference tools remain at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483),
 also named `archive/pre-participant-model-20261010`. They are reference material
 and are not part of the current executable system.
@@ -42,6 +44,7 @@ and are not part of the current executable system.
 | `NodeMain.lean`, `VDSI/Node/Runtime/` | Command-line entry, TCP node process, snapshots, and wire encoding |
 | `Tests/` | Core regression tests and a two-process TCP integration test |
 | `Experiments/` | Optional experiments and their own checks |
+| `studies/` | Preserved protocol and payment notes with exact archived source files for excerpts; excluded from the core build |
 | `scripts/check.sh` | Build, run core tests, and audit theorem assumptions |
 | `scripts/Audit.lean` | Axiom dependency checks for public theorems |
 | `lakefile.toml`, `lean-toolchain` | Build configuration and pinned Lean version |

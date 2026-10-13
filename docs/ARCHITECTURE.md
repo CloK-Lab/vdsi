@@ -75,9 +75,12 @@ requires a formal execution and fairness model; it is not implied by safety.
 
 The previous source tree, models, proofs, and architecture proposal are preserved
 at [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
-Their directory structure and modeling choices are not requirements for the
-current implementation. The reference models remain available there for later
-comparisons.
+The corresponding notes are published from `studies/`, beside the exact archived
+source files they excerpt. `studies/SNAPSHOT.json` records their original paths
+and digests. This documentation snapshot is excluded from the current Lean
+build; it is not a second runtime or a complete library. The complete archived
+checkout supplies the executable studies and their audit. Their directory
+structure and modeling choices are not requirements for the current implementation.
 
 ## Developing the model
 

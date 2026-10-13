@@ -13,8 +13,11 @@ and storage runtime lives in `VDSI/Node/Runtime/`; task experiments live separat
 in `Experiments/`.
 The previous implementation and notes are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
-Consult them as references; introduce a previous definition only after its
-meaning and assumptions have been considered for the new model.
+Their reading notes and source excerpts are retained in `studies/`; see its
+[source snapshot guide](studies/README.md). Consult them as references; introduce
+a previous definition only after its meaning and assumptions have been
+considered for the new model. Rebuilding the runtime does not retire the
+notebook's accumulated explanations or change its overall research scope.
 
 Agree on the meaning of one concept before implementing it. Add only the
 definitions and concrete examples needed to explain that concept. When adding
