@@ -11,6 +11,13 @@ participant registration, the collision probability of uniformly sampled IDs,
 node operations, and a system model of snapshot delivery and recovery. The TCP
 and storage runtime lives in `VDSI/Node/Runtime/`; task experiments live separately
 in `Experiments/`.
+`VDSI/Identity/` additionally contains the registration policy, canonical signing
+bytes, and a research Ed25519 backend used by `identity-demo`. Keep its tested
+cryptographic behavior distinct from the proved registration and encoding rules.
+Local seed storage and recovery are tested IO behavior, not formally verified
+storage. Keep `init` separate from `resume`: missing or invalid saved state must
+never silently create a replacement identity. Persistence tests use temporary
+directories and must not inspect or modify a contributor's identity files.
 The previous implementation and notes are preserved at
 [commit 43f2620](https://github.com/CloK-Lab/vdsi/tree/43f26201474a144b68924d2b485a0e3fd857c483).
 Their reading notes and source excerpts are retained in `studies/`; see its
@@ -64,6 +71,11 @@ This builds the core library and node executable, runs the Lean tests and a
 two-process TCP test, and audits theorem assumptions. The process test requires
 Python 3 and permission to use loopback sockets. Run `lake exe proof-experiment` separately when changing that
 experiment; its checks are included in the experiment command.
+
+When changing identity signing, also run `lake exe identity-demo` (macOS/Linux)
+and `node tools/check-identity-interop.mjs`. The latter uses only public
+deterministic fixtures and compares against Node crypto as a reference. Never
+use fresh private seeds in logs, checked-in fixtures, or command-line arguments.
 
 Keep the Lean version pinned and add dependencies only when a concrete case
 needs them. Export core definitions and proofs through `VDSI.lean`. Core tests

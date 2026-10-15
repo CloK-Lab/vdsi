@@ -49,6 +49,15 @@ They are separate from the current node runtime.
 
 ## Current implementation
 
+- [Identity registration policy](../VDSI/Identity/Note.mdx): full-public-key
+  identities, scoped registration, canonical signing bytes, and replay
+  preservation with an explicit verifier parameter. A local demo signs and
+  verifies registrations using a tested, unproved Lean Ed25519 implementation.
+  Explicit creation and recovery retain an identity in local research storage;
+  separate registry commands persist signed records and validate recovery with
+  proved acceptance rules. Public file exchange adds verified merge rules and
+  key-set agreement after successful imports; TCP node integration is not implemented.
+
 - [Participant registries](../VDSI/Node/Note.mdx): independent node processes,
   duplicate rejection, snapshot exchange, and saved-state recovery.
 - [Identifier collision probability](../VDSI/IdGeneration/Note.mdx): a proved
