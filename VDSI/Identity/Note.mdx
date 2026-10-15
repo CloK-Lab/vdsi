@@ -1,0 +1,448 @@
+---
+title: "Identity registration policy"
+description: "Public-key identity, registration scope, and idempotent relay under an explicit verifier interface."
+slug: identity-registration-policy
+order: 12
+section: Current implementation
+---
+
+This note models registration of a public-key identity in one network. The
+executable policy checks a registration statement and an explicit verifier's
+result before retaining the signed record. A canonical v1 message encoder and
+byte-verifier adapter bind the statement to signing bytes. Lean proofs establish
+encoding injectivity, validation before acceptance, preservation of existing
+records, and uniqueness by full public key. A separate research implementation
+of SHA-512 and Ed25519 now supplies the verifier in a local signed-registration
+demo, with explicit local seed creation and recovery. Cryptographic correctness,
+OS entropy, and filesystem behavior are not proved. Separate registry commands
+persist signed records and use a proved validation rule on recovery;
+authenticated node transport is not implemented.
+
+The candidate key and signature widths follow Ed25519 in
+[RFC 8032, Section 5.1](https://www.rfc-editor.org/rfc/rfc8032.html#section-5.1).
+The hash implementation follows
+[FIPS 180-4, Sections 5 and 6.4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf).
+The implementation is checked against reference outputs, without a proof of
+conformance for all inputs or protection against side-channel attacks.
+
+## Identity and running instances
+
+The existing [participant registry](../Node/Note.mdx) stores natural-number IDs.
+The identity model is separate: it identifies a participant by the entire public
+key encoding. It does not hash or truncate the key, and does not convert it to
+the existing `ParticipantId` type.
+
+```lean4 file="./Model.lean" declaration="PublicKey"
+```
+
+Alice may run two processes using the same key. Both represent the same identity
+in this registry. Bob's different key represents a different identity. The model
+does not equate keys with unique human beings, infer how many processes exist,
+or assign spending authority to a registered identity.
+
+Copying a public key does not supply signing authority. Copying a private key
+would allow two instances to act under the same identity, subject to the actual
+signature scheme. The default demo creates a fresh seed in memory; explicit
+`init` and `resume` modes also demonstrate saved-key recovery across processes.
+The [uniform ID sampling theorem](../IdGeneration/Note.mdx) does not establish a
+collision bound for cryptographic public keys or copied instances.
+
+## What registration authorizes
+
+A statement names the registration domain, version, network, and full public key:
+
+```lean4 file="./Model.lean" declaration="Statement"
+```
+
+`statementFor` constructs domain `vdsi.identity.register` and version `1`.
+Registration authorizes publication of the identity record in that network.
+There is no payment amount, task permission, or mutable profile in the statement.
+The network is a locally configured string, not an authenticated discovery service.
+Deployments that reuse that string would share the same modeled scope.
+
+The policy verifier receives the complete statement and signature. The
+`verifierFromBytes` adapter below supplies canonical signing bytes to a
+byte-oriented checker. `ed25519Verifier` connects the research backend to this
+interface. The transport decoder is not implemented.
+
+```lean4 file="./Model.lean" declaration="Verifier"
+```
+
+The policy separately requires the expected domain, version, and network,
+a 32-byte key encoding, a 64-byte signature, and verifier acceptance:
+
+```lean4 file="./Spec.lean" declaration="ValidRegistration"
+```
+
+A byte sequence of the right length may still be an invalid key or signature.
+Those checks belong to the verifier. An always-true verifier would accept forged
+records of the right shape; the proofs do not rule out choosing such a verifier.
+
+## Canonical signing bytes
+
+Version 1 uses this exact layout:
+
+| Offset | Bytes |
+| --- | --- |
+| 0–21 | ASCII `vdsi.identity.register` |
+| 22 | NUL byte `00` |
+| 23 | Binary version byte `01` |
+| 24–55 | Full 32-byte candidate public-key encoding |
+| 56 onward | Exact network UTF-8 bytes, through end-of-message |
+
+The application prefix is part of the signed message, not an Ed25519ctx
+context. The signature itself is excluded. Unknown domains, versions other
+than `1`, and keys of any length other than 32 are rejected before bytes are
+returned. For example, version `257` is rejected rather than truncated to `01`.
+
+```lean4 file="./Encoding.lean" declaration="signingBytes"
+```
+
+For a key containing consecutive bytes `00` through `1f` and network `lab`,
+the final three bytes are `6c 61 62`, and the message is 59 bytes long. Network
+`网络` instead ends in `e7 bd 91 e7 bb 9c` and gives a 62-byte message. The
+empty network string is allowed and gives a 56-byte message; policy still
+requires an exact match to the locally configured network.
+
+No text normalization or case folding takes place. `lab` and `LAB` are different
+networks. The single character `é` and the sequence `e` followed by a combining
+acute accent are also different. Embedded NUL bytes in a network name remain
+part of its UTF-8 data; the network occupies the remainder of the message.
+
+Field boundaries are determined by the fixed prefix and fixed 32-byte key.
+There is exactly one variable-length field, at the end. An outer transport
+must delimit whole messages; this signing encoding is not a stream framing
+protocol, and concatenating messages does not supply such framing.
+
+`signingBytes_injective` proves that if two statements successfully encode to
+the same bytes, the statements are equal. The proof cancels the fixed prefix,
+separates the fixed-length public keys, and uses injectivity of Lean's string
+UTF-8 representation for the remaining networks. Rejected statements return
+`none`; no injectivity claim is made about those failures.
+
+<CodePreview title="Identical signing bytes imply identical supported statements">
+
+```lean4 file="./EncodingVerification.lean" declaration="signingBytes_injective"
+```
+
+</CodePreview>
+
+The adapter sends the claimed key, canonical bytes, and unmodified signature to
+the supplied byte checker. Encoding failure returns `false`, even with an
+always-true checker. `byte_verifier_acceptance_uses_encoding` proves that adapter
+acceptance corresponds to a successful encoding and a checker call on those
+exact inputs. It does not prove that the supplied checker implements Ed25519.
+
+```lean4 file="./Encoding.lean" declaration="verifierFromBytes"
+```
+
+## Register and relay a record
+
+Registration checks validity before checking for a duplicate key. Invalid input
+returns `none`; the caller retains the prior state. A valid record for a known
+key returns the registry unchanged. A new key appends its signed record.
+
+```lean4 file="./Execution.lean" declaration="register"
+```
+
+| Input | Starting registry | Result |
+| --- | --- | --- |
+| Alice's valid registration | Empty | Retain Alice's record |
+| Alice's key with Bob's signature | Empty or Alice already present | Reject if the verifier rejects |
+| Relay of Alice's valid record | Empty | Validate and retain Alice's record |
+| Relay of Alice's valid record | Alice already present | Return the unchanged registry |
+| Second instance using Alice's same valid record | Alice already present | Return the unchanged registry |
+| Bob's valid record with a different key | Alice already present | Retain both records |
+
+Relaying Alice's registration does not authenticate the relay operator as Alice.
+Each receiving registry can run the same operation independently. This is a
+local operation; the TCP node still exchanges unauthenticated numeric IDs.
+
+No freshness challenge is needed for this model's immutable, replayable
+publication statement. It does not prove that a sender currently possesses a
+private key, or support deregistration, revocation, or key rotation.
+
+## Local signed-registration demo
+
+From the repository root on macOS or Linux, run:
+
+```sh
+lake exe identity-demo
+```
+
+The executable reads 32 seed bytes from `/dev/urandom`, derives a public key,
+constructs a registration for `network-A`, encodes it, and produces a real
+Ed25519 signature. It passes that record through `ed25519Verifier` and the same
+`register` operation used in the policy proofs. The registry then contains one
+identity. The seed is neither printed nor saved, and a new run creates a new
+ephemeral identity. Copying the seed would recreate the same key; it would not
+establish a new independent identity.
+
+```lean4 file="./Signing.lean" declaration="signRegistration"
+```
+
+The demo changes `network-A` to `network-B` without signing again. Direct
+signature verification fails. It also attempts registration under a local
+`network-B` policy, which rejects the record: this isolates signature failure
+from a simple mismatch with the node's configured network. Replaying the
+original signed record succeeds without adding another identity.
+
+```lean4 file="./Signing.lean" declaration="ed25519Verifier"
+```
+
+`Entropy.readSeed` accumulates short positive reads until it has exactly 32
+bytes. EOF, an oversized read, or an IO exception aborts creation. There is no
+clock-based or deterministic fallback. OS entropy quality, independence across
+cloned environments, private-memory protection, and secure erasure are assumed
+or unimplemented; the ID collision theorem does not verify this seed source.
+
+The backend implements PureEd25519 with canonical point decoding and scalar
+range checks. For identity registration, it also requires both public key A
+and signature point R to be nonidentity points in the prime-order subgroup,
+and checks the uncofactored equation. This intentionally rejects more inputs
+than the RFC's cofactored equation, including small-order and mixed-order points.
+The code uses variable-time arbitrary-precision arithmetic and has no secure
+erasure mechanism. It is a research implementation, not a production key store
+or a backend for valuable signing credentials.
+
+## Keeping the same identity after restart
+
+The recovery question is whether a new process can sign under the same public
+key. The local research store saves the 32-byte secret seed and its derived
+32-byte public key, preceded by the exact UTF-8 marker `vdsi.identity.seed.v1\n`.
+There is no network name in the seed file: network scope belongs to each signed
+registration, while the same key can sign for different networks.
+
+```sh
+mkdir -p .vdsi
+lake exe identity-demo init .vdsi/identity
+lake exe identity-demo resume .vdsi/identity
+```
+
+The two commands run in separate processes and print the same public identity.
+Each signs and verifies a registration, rejects tampering, and checks replay.
+Each also starts with an empty in-memory registry: retaining signing authority
+is distinct from retaining the node's registration records. The seed is never
+printed. `.vdsi/` is ignored by Git; do not commit or share the secret seed file.
+
+Creation requires a new directory under an existing trusted parent. It sets the
+directory's POSIX mode to `0700` before writing secret data, writes
+`identity.pending` with mode `0600`, flushes, and renames to `identity.seed`.
+It refuses any existing destination directory, including a previous incomplete
+attempt. Failures leave their files for inspection; creation does not overwrite
+or automatically remove them. An interrupted attempt without the final file
+cannot be resumed.
+
+Recovery reads at most the expected size plus one byte and rejects wrong lengths,
+unknown markers, and seed/public-key mismatches. It rejects final-component
+symlinks, nonregular files, and files with multiple hard links. A missing or
+invalid file causes an error without invoking the random source or changing the
+file. The decoder is shared with the runtime:
+
+```lean4 file="./SeedFile.lean" declaration="decode"
+```
+
+| Situation | Result |
+| --- | --- |
+| Restart with the intact seed file | Same public-key identity can register again |
+| Copy the seed file to another private directory | Same identity, now controlled by both copies |
+| Independently initialize a different directory | Fresh seed and derived identity; uniqueness is not an unconditional guarantee |
+| Lose, truncate, or inconsistently change the file | Recovery fails; no replacement identity is generated |
+| Replace the entire file with another valid seed/key pair | A different identity loads; there is no external identity anchor |
+
+This format is plaintext and the stored public key is a consistency check, not
+an authentication tag. Trusted ancestor directories, preserved private permissions,
+and no hostile concurrent filesystem replacement are assumptions; final-component
+checks do not eliminate path races or hostile ACLs. Mode bits do not protect from
+the account owner or root. Encryption, secure erasure, backup, rollback detection,
+key rotation, and revocation are not implemented. Flush and rename support the
+tested process-restart workflow, without a power-loss durability guarantee.
+These are implementation boundaries, not Lean-proved filesystem properties.
+
+## Recovering the registration table
+
+The seed file retains signing authority. A separate registry snapshot retains
+the signed records that the local system has accepted. With the identity from
+the preceding example, run:
+
+```sh
+lake exe identity-demo registry-init .vdsi/registry
+lake exe identity-demo registry-register .vdsi/identity .vdsi/registry
+lake exe identity-demo registry-show .vdsi/registry
+lake exe identity-demo registry-register .vdsi/identity .vdsi/registry
+```
+
+Initialize once. Each command is a separate process. The first registration
+reports one identity only after saving; `registry-show` restores, verifies, and
+lists that public key without accessing its private seed. Repeating registration
+still reports one identity and does not rewrite the snapshot. These demo commands
+use `network-A`; they do not connect to the numeric-ID TCP nodes.
+
+The JSON file contains a format version, network, and full statements/signatures.
+Decoding rejects byte integers outside 0–255, then calls `restoreRegistry` on the
+decoded list. Every record must satisfy the configured policy and all full keys
+must be unique. Duplicate records are rejected instead of silently deduplicated.
+The operation returns the entire list unchanged or rejects the entire snapshot:
+
+```lean4 file="./Execution.lean" declaration="restoreRegistry"
+```
+
+`restoreRegistry_success_iff` proves that success is equivalent to the returned
+list being identical to the input and that input satisfying `RegistryInvariant`.
+Thus valid unique-key lists are accepted, invalid ones cannot succeed, and
+successful recovery neither drops nor substitutes records.
+
+<CodePreview title="Recovery accepts exactly valid snapshots without changing records">
+
+```lean4 file="./Verification.lean" declaration="restoreRegistry_success_iff"
+```
+
+</CodePreview>
+
+`restoreRegistry_preserves_invariant` states the resulting validity and uniqueness
+directly. Both proofs concern the same executable operation invoked after JSON
+decoding. They assume the supplied verifier's result; they do not establish
+Ed25519 correctness, JSON parser conformance, or filesystem reliability.
+
+`RegistryStorage.accept` loads and validates the current snapshot, applies the
+existing `register`, saves a changed candidate, and only then returns success.
+The CLI prints confirmation after this return. Missing files, invalid UTF-8 or
+JSON, wrong snapshot scope, invalid signatures, and duplicate keys all cause an
+error. Recovery never substitutes an empty table. Only explicit initialization
+creates an empty registry in a new directory.
+
+Storage uses `registry.json` and a temporary `registry.pending` in a private
+directory. Reads and writes are limited to 65,536 bytes including JSON overhead.
+Writes flush the temporary file before renaming it over the snapshot; failures
+propagate without confirmation. Pending files are never loaded as committed
+state. This assumes one writer and trusted filesystem paths. There is no fsync
+or concurrency protocol: power-loss durability and simultaneous writers are
+outside the guarantee. A crash after rename but before acknowledgement may leave
+the registration saved; retrying the same signed record is idempotent.
+
+For example, after Alice is saved, a failure while adding Bob must not produce a
+success message. With the tested pre-rename failures, the saved Alice snapshot
+is unchanged. Separately, replacing the whole file with an older valid snapshot
+or a valid subset can pass every validation check. Validity does not establish
+historical completeness; rollback detection requires an additional trusted anchor.
+
+## Exchanging public identity records
+
+Alice registers at A and Bob at B. A exports its public records, and B verifies
+them independently; no private seed or live sender is needed. For two initialized
+registry directories with registered identities:
+
+```sh
+lake exe identity-demo registry-export .vdsi/a .vdsi/export-a
+lake exe identity-demo registry-export .vdsi/b .vdsi/export-b
+lake exe identity-demo registry-import .vdsi/a .vdsi/export-b/registry.json
+lake exe identity-demo registry-import .vdsi/b .vdsi/export-a/registry.json
+lake exe identity-demo registry-show .vdsi/a
+lake exe identity-demo registry-show .vdsi/b
+```
+
+Exports require new directories and contain only `registry.json`, in the same
+versioned public snapshot format used for recovery. Both inputs must satisfy
+the receiving network and verifier policy. Duplicate keys within an input file
+reject it. Keys shared across the two valid inputs retain the local signed
+record; unknown keys are appended in incoming order. The full candidate is
+validated before it can be saved. One bad signature, including for a known key,
+rejects the entire import without retaining a valid prefix.
+
+```lean4 file="./Merge.lean" declaration="mergeRegistry"
+```
+
+`mergeRegistry_success` proves that a successful merge returns the candidate and
+satisfies the registry invariant. `mergeRegistry_preserves_records` proves exact
+retention of every local signed record. `combineRecords_keys` and
+`mergeRegistry_keys` establish that candidate and successful-result key membership
+is exactly the union of the inputs. `mergeRegistry_known_keys_unchanged` proves
+that a successful import of already-known keys leaves local records unchanged.
+The runtime consequently skips the disk write on such a replay.
+
+<CodePreview title="Successful exchanges agree on public-key membership">
+
+```lean4 file="./MergeVerification.lean" declaration="mergeRegistry_exchange_agrees"
+```
+
+</CodePreview>
+
+After successful exchange, A can contain `[Alice, Bob]` and B `[Bob, Alice]`:
+they agree on which identities are registered. The proof compares public-key
+membership, not list ordering or signature bytes. It is conditional on both
+merges succeeding, and does not establish eventual delivery or unconditional
+success of IO. A 64 KiB combined-snapshot limit or disk failure may prevent
+saving, in which case no import confirmation is printed. Existing single-writer,
+trusted-directory, no-fsync, and no-rollback-protection boundaries apply.
+This is manual file exchange, not authenticated peer transport. Forwarding a
+signed registration does not prove the forwarder controls that identity.
+
+## Preservation properties
+
+The invariant requires every record to satisfy the same network and verifier
+policy and every full key to appear at most once:
+
+```lean4 file="./Spec.lean" declaration="RegistryInvariant"
+```
+
+`registration_requires_validation` proves that every successful call passed
+the policy, including calls for known keys. `invalid_registration_rejected`
+proves rejection, while `valid_replay_unchanged` proves that a valid replay
+cannot replace the original record. `registration_preserves_records` proves
+that successful registration retains every earlier record.
+
+<CodePreview title="Preserve validated records and unique keys">
+
+```lean4 file="./Verification.lean" declaration="registration_preserves_invariant"
+```
+
+</CodePreview>
+
+The theorem assumes a valid starting registry and a fixed verifier and network.
+It does not validate an arbitrary restored snapshot or justify changing a
+verifier while retaining old records. These are deterministic policy theorems;
+they establish neither signature unforgeability nor entropy-source security.
+
+## Run the policy checks
+
+Run `lake exe tests` from the repository root. `Tests/Identity.lean` supplies
+an exact allowlist of two public fixtures, not a cryptographic signature
+implementation. It exercises copied IDs with mismatched signatures, modified
+keys, relays, duplicate instances, and two distinct keys. An always-true test
+verifier isolates rejection of wrong domains, versions, networks, and lengths;
+an always-false verifier checks rejection propagation. These fixtures remain
+in tests and are not provided as a default runtime verifier.
+
+`Tests/IdentityEncoding.lean` checks an independent byte vector, Unicode and
+embedded-NUL networks, binary key data, version and width rejection, and the
+adapter's key/message/signature contract. Its byte checker is a fixture
+allowlist; it checks integration with registration without claiming cryptography.
+
+`Tests/IdentityCrypto.lean` checks RFC 8032 Section 7.1 vectors 1–3 for exact
+public keys and signatures, valid verification, altered messages, malformed
+points, scalar malleability, and the signed-registration flow. It also checks
+SHA-512 padding-boundary fixtures and injected entropy read failures.
+
+`node tools/check-identity-interop.mjs` compares 27 deterministic public-fixture
+cases with Node crypto: three seeds and message lengths 0, 1, 111, 112, 127,
+128, 129, 255, and 1024 bytes. It compares exact public keys and signatures and
+checks verification and tamper rejection. This is a reference check; the demo
+does not execute Node or delegate cryptography to an external service. These
+finite tests are not a formal verification or a comprehensive cryptographic audit.
+
+`./scripts/check.sh` builds the core and demo, runs the core and existing node
+integration tests, and audits the seventeen identity, encoding, recovery, and merge theorems. Those
+theorems do not establish correctness or security of the cryptographic backend.
+It also runs `Tests/identity_processes.py` against the compiled executable in
+temporary directories: separate-process recovery, copied and independent
+identities, corrupt and unfinished files, exclusive initialization, symlinks,
+hard links, and private creation permissions even with a permissive umask.
+The identity implementation has not been connected to node registry storage or transport.
+`Tests/IdentityRecovery.lean` checks the recovery/codec boundary and failed
+saves, including a rename failure after writing temporary data.
+`Tests/identity_registry_processes.py` checks independent-process recovery,
+unchanged replay, two identities, malformed or forged snapshots, missing files,
+size limits, and write failure without acknowledgement or loss of saved records.
+`Tests/identity_exchange_processes.py` checks public-only exports, independently
+validated imports, whole-import rejection, save failure, identical key sets after
+exchange, repeated import without rewriting, and recovery in fresh processes.

@@ -1,6 +1,6 @@
 name = "vdsi"
 version = "0.1.0"
-defaultTargets = ["VDSI", "tests", "node"]
+defaultTargets = ["VDSI", "tests", "node", "identity-demo"]
 
 [leanOptions]
 warningAsError = true
@@ -30,6 +30,10 @@ root = "NodeMain"
 [[lean_lib]]
 name = "Experiments"
 globs = ["Experiments.*"]
+
+[[lean_exe]]
+name = "identity-demo"
+root = "IdentityMain"
 
 [[lean_exe]]
 name = "proof-experiment"

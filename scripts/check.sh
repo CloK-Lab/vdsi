@@ -6,6 +6,9 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
 lake build
 lake exe tests
+python3 Tests/identity_processes.py
+python3 Tests/identity_registry_processes.py
+python3 Tests/identity_exchange_processes.py
 python3 Tests/node_processes.py
 lake env lean scripts/Audit.lean
 

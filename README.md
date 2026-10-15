@@ -27,6 +27,29 @@ payments, or token issuance and redemption. The optional proof-task experiment
 checks prewritten Lean submissions with the kernel; it is separate from the
 core library and does not call an AI prover.
 
+The [identity registration policy](VDSI/Identity/Note.mdx) models full-public-key
+identities with scoped registration statements and a parameterized signature
+verifier. Its executable rule and proofs cover validation before acceptance,
+idempotent replay, and preservation of valid records with unique keys. A canonical
+v1 signing encoder has an injectivity proof and an adapter for byte-oriented
+signature checkers. A local `identity-demo` now obtains an ephemeral seed from
+the OS and runs Lean implementations of SHA-512 and Ed25519 to sign, verify,
+and register an identity. It demonstrates rejection of a changed network and
+idempotent replay. The cryptographic code is tested, not formally verified, and
+uses variable-time arithmetic with no secure-memory erasure guarantee. It is
+for research, not production credentials. Explicit `init` and `resume` modes
+save and restore a plaintext seed in an owner-only directory, retaining the same
+public-key identity across processes. Missing or invalid files fail without
+creating a replacement identity. Separate `registry-*` commands save and restore
+signed records, revalidating every entry and rejecting duplicate keys. Two
+recovery theorems prove exact record preservation and the registry invariant on
+success; JSON and disk IO remain tested boundaries. Integration with the
+numeric-ID node runtime is not implemented.
+Public snapshots can also be exported to a new directory and imported into a
+second registry. Imports verify every incoming record, preserve local records,
+and save only after the whole merge succeeds. Proved successful-merge properties
+include validity, unique keys, exact key-set union, and unchanged known-key replay.
+
 The protocol notes and payment examples are retained in [the notebook](docs/Overview.mdx).
 Their source excerpts live in [`studies/`](studies/README.md), separate from the
 current runtime. The complete previous code, proofs, and reference tools remain at
@@ -40,6 +63,7 @@ and are not part of the current executable system.
 | --- | --- |
 | `VDSI.lean`, `VDSI/` | Core library: participants, registration, nodes, and system execution |
 | `VDSI/IdGeneration/` | Finite uniform ID sampling model, collision-risk specification, and birthday-bound proof |
+| `VDSI/Identity/` | Identity registration policy, explicit verifier boundary, and preservation proofs |
 | `VDSI/System/` | System model, execution schedules, safety specification and proofs, and an unproved propagation target |
 | `NodeMain.lean`, `VDSI/Node/Runtime/` | Command-line entry, TCP node process, snapshots, and wire encoding |
 | `Tests/` | Core regression tests and a two-process TCP integration test |
@@ -67,10 +91,65 @@ Run these commands from the repository root:
 | --- | --- |
 | `./scripts/check.sh` | Build, run core and two-process TCP tests, and audit theorem assumptions; requires Python 3 and loopback sockets |
 | `lake exe tests` | Run only the Lean core tests, without opening sockets |
+| `lake exe identity-demo` | Run fresh local identity creation, signing, verification, tamper rejection, and replay; macOS/Linux |
+| `lake exe identity-demo init DIRECTORY` | Save a new research identity in a new directory; parent must exist |
+| `lake exe identity-demo resume DIRECTORY` | Restore that identity and repeat the local registration demo |
+| `node tools/check-identity-interop.mjs` | Compare 27 public deterministic fixtures with Node crypto; reference check only |
 | `lake exe node ID PORT [PEER_PORT ...]` | Run an independent node on loopback |
 | `lake exe proof-experiment` | Run the separate proof-task experiment, including its own regression checks |
 
 The system check does not build or run experiments.
+
+To retain a research identity across runs:
+
+```sh
+mkdir -p .vdsi
+lake exe identity-demo init .vdsi/identity
+lake exe identity-demo resume .vdsi/identity
+```
+
+Both runs print the same public identity. Use `init` once: it refuses an existing
+directory, even an empty or incomplete one. `resume` never generates a new key.
+The seed file is secret plaintext, with directory mode `0700` and file mode
+`0600` set during creation; use a trusted local parent and preserve those rights.
+This is not encrypted backup or production credential storage. `.vdsi/` is
+ignored by Git. Each run builds a fresh in-memory registry; only the identity
+seed persists in these two modes. To persist the registration table separately:
+
+```sh
+lake exe identity-demo registry-init .vdsi/registry
+lake exe identity-demo registry-register .vdsi/identity .vdsi/registry
+lake exe identity-demo registry-show .vdsi/registry
+lake exe identity-demo registry-register .vdsi/identity .vdsi/registry
+```
+
+Initialize the registry directory once. Each later command is a new process;
+`registry-show` restores and verifies the saved identity, and the repeated
+registration still reports one identity without rewriting the file. The demo
+uses `network-A`. Missing or invalid snapshots fail; they never reset to empty.
+Use one writer per registry directory. Snapshots are limited to 64 KiB and use
+flush/rename without a power-loss durability guarantee. Valid older snapshots
+or valid subsets cannot be detected as rollback. See the identity note for
+corruption checks and storage boundaries.
+
+To exchange two initialized registries (for example `.vdsi/a` and `.vdsi/b`),
+each with its own registered identities:
+
+```sh
+lake exe identity-demo registry-export .vdsi/a .vdsi/export-a
+lake exe identity-demo registry-export .vdsi/b .vdsi/export-b
+lake exe identity-demo registry-import .vdsi/a .vdsi/export-b/registry.json
+lake exe identity-demo registry-import .vdsi/b .vdsi/export-a/registry.json
+lake exe identity-demo registry-show .vdsi/a
+lake exe identity-demo registry-show .vdsi/b
+```
+
+Export directories must be new. They contain only public signed records, never
+private seeds. Import validates the complete file before saving; an invalid
+known-key record still rejects the entire import. Repeating import adds no
+duplicate and does not rewrite storage. Both successful imports yield the same
+set of public keys, although record order and retained signatures may differ.
+This is manual file exchange, without authenticated transport or automatic delivery.
 
 To try two nodes, run `lake exe node 1 7101 7102` in one terminal and
 `lake exe node 2 7102 7101` in another. Enter `register 1` in the first and

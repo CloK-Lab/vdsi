@@ -1,5 +1,73 @@
 import VDSI
 
+/-- info: 'VDSI.Identity.mergeRegistry_success' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.mergeRegistry_success
+
+/-- info: 'VDSI.Identity.mergeRegistry_preserves_records' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.mergeRegistry_preserves_records
+
+/-- info: 'VDSI.Identity.combineRecords_keys' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Identity.combineRecords_keys
+
+/-- info: 'VDSI.Identity.mergeRegistry_keys' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Identity.mergeRegistry_keys
+
+/-- info: 'VDSI.Identity.mergeRegistry_known_keys_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Identity.mergeRegistry_known_keys_unchanged
+
+/-- info: 'VDSI.Identity.mergeRegistry_exchange_agrees' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Identity.mergeRegistry_exchange_agrees
+
+/-- info: 'VDSI.Identity.restoreRegistry_success_iff' does not depend on any axioms -/
+#guard_msgs in
+#print axioms VDSI.Identity.restoreRegistry_success_iff
+
+/-- info: 'VDSI.Identity.restoreRegistry_preserves_invariant' does not depend on any axioms -/
+#guard_msgs in
+#print axioms VDSI.Identity.restoreRegistry_preserves_invariant
+
+/-- info: 'VDSI.Identity.signingBytes_requires_supported_statement' does not depend on any axioms -/
+#guard_msgs in
+#print axioms VDSI.Identity.signingBytes_requires_supported_statement
+
+/-- info: 'VDSI.Identity.signingBytes_injective' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.signingBytes_injective
+
+/-- info: 'VDSI.Identity.unsupported_encoding_rejected' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.unsupported_encoding_rejected
+
+/-- info: 'VDSI.Identity.byte_verifier_acceptance_uses_encoding' does not depend on any axioms -/
+#guard_msgs in
+#print axioms VDSI.Identity.byte_verifier_acceptance_uses_encoding
+
+/-- info: 'VDSI.Identity.registration_requires_validation' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.registration_requires_validation
+
+/-- info: 'VDSI.Identity.invalid_registration_rejected' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.invalid_registration_rejected
+
+/-- info: 'VDSI.Identity.valid_replay_unchanged' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.valid_replay_unchanged
+
+/-- info: 'VDSI.Identity.registration_preserves_records' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms VDSI.Identity.registration_preserves_records
+
+/-- info: 'VDSI.Identity.registration_preserves_invariant' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms VDSI.Identity.registration_preserves_invariant
+
 /-- info: 'VDSI.IdGeneration.toParticipantId_eq_iff' depends on axioms: [propext] -/
 #guard_msgs in
 #print axioms VDSI.IdGeneration.toParticipantId_eq_iff
